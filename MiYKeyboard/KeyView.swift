@@ -8,6 +8,9 @@
 
 import UIKit
 
+let grayColor = UIColor.init(red: 200/255.0, green: 203/255.0, blue: 211/255.0, alpha: 1)
+let blueColor = UIColor.init(red: 10/255.0, green: 96/255.0, blue: 254/255.0, alpha: 1)
+
 class KeyView: UIControl {
     
     let titleLabel = UILabel()
@@ -48,9 +51,12 @@ class KeyView: UIControl {
         super.touchesBegan(touches, with: event)
         let color = self.backgroundColor
         if color == UIColor.white {
-            self.backgroundColor = UIColor.lightText
+            self.backgroundColor = grayColor
         } else {
             self.backgroundColor = UIColor.white
+            if self.key?.type == .return {
+                self.titleLabel.textColor = UIColor.black
+            }
         }
     }
 
@@ -64,11 +70,11 @@ class KeyView: UIControl {
         switch type {
         case .symbol,
              .backspace,
-             .changeToSymbol,
              .nextKeyboard:
-            backgroundColor = UIColor.lightText
+            backgroundColor = grayColor
         case .return:
-            backgroundColor = UIColor.init(colorLiteralRed: 10/255.0, green: 96/255.0, blue: 254/255.0, alpha: 0.95)
+            backgroundColor = blueColor
+            titleLabel.textColor = UIColor.white
             
         default:
             backgroundColor = UIColor.white

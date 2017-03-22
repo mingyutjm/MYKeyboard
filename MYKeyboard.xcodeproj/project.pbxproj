@@ -326,10 +326,12 @@
 				TargetAttributes = {
 					6D38EC0D1E80027300A8E605 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 843XY6842K;
 						ProvisioningStyle = Automatic;
 					};
 					6D68FAE31E7EC14A003AA407 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 843XY6842K;
 						ProvisioningStyle = Automatic;
 					};
 					6D68FAFA1E7EC14A003AA407 = {
@@ -558,6 +560,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7342A40FB580DAE51132B86E /* Pods-MiYKeyboard.debug.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 843XY6842K;
 				INFOPLIST_FILE = MiYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard.MiYKeyboard;
@@ -571,6 +574,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3D874EEC497A95C54849D2D1 /* Pods-MiYKeyboard.release.xcconfig */;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 843XY6842K;
 				INFOPLIST_FILE = MiYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard.MiYKeyboard;
@@ -679,6 +683,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 843XY6842K;
 				INFOPLIST_FILE = MYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard;
@@ -693,6 +698,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 843XY6842K;
 				INFOPLIST_FILE = MYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard;
