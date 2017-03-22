@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2DA8D0FDB2F5AD46AC9BBF1D /* Pods_MYKeyboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A5E10DF91D514D3520E16A /* Pods_MYKeyboard.framework */; };
+		51D05ED49149804E83FA5509 /* Pods_MiYKeyboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9E6ED46194036724DEDCAD /* Pods_MiYKeyboard.framework */; };
 		6D38EC111E80027300A8E605 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D38EC101E80027300A8E605 /* KeyboardViewController.swift */; };
 		6D38EC151E80027300A8E605 /* MiYKeyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6D38EC0E1E80027300A8E605 /* MiYKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		6D3F94281E825540000EE05C /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3F94271E825540000EE05C /* KeyView.swift */; };
@@ -61,6 +62,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3D874EEC497A95C54849D2D1 /* Pods-MiYKeyboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MiYKeyboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-MiYKeyboard/Pods-MiYKeyboard.release.xcconfig"; sourceTree = "<group>"; };
 		6B25012D0E9DBD7E9FAB638B /* Pods-MYKeyboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MYKeyboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MYKeyboard/Pods-MYKeyboard.debug.xcconfig"; sourceTree = "<group>"; };
 		6D38EC0E1E80027300A8E605 /* MiYKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MiYKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D38EC101E80027300A8E605 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
@@ -81,6 +83,8 @@
 		6D68FB061E7EC14A003AA407 /* MYKeyboardUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MYKeyboardUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D68FB0A1E7EC14A003AA407 /* MYKeyboardUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MYKeyboardUITests.swift; sourceTree = "<group>"; };
 		6D68FB0C1E7EC14A003AA407 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7342A40FB580DAE51132B86E /* Pods-MiYKeyboard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MiYKeyboard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MiYKeyboard/Pods-MiYKeyboard.debug.xcconfig"; sourceTree = "<group>"; };
+		BF9E6ED46194036724DEDCAD /* Pods_MiYKeyboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MiYKeyboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C2A5E10DF91D514D3520E16A /* Pods_MYKeyboard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MYKeyboard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D077D60A754B3089F76C5310 /* Pods-MYKeyboard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MYKeyboard.release.xcconfig"; path = "Pods/Target Support Files/Pods-MYKeyboard/Pods-MYKeyboard.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,6 +94,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51D05ED49149804E83FA5509 /* Pods_MiYKeyboard.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				C2A5E10DF91D514D3520E16A /* Pods_MYKeyboard.framework */,
+				BF9E6ED46194036724DEDCAD /* Pods_MiYKeyboard.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -222,6 +228,8 @@
 			children = (
 				6B25012D0E9DBD7E9FAB638B /* Pods-MYKeyboard.debug.xcconfig */,
 				D077D60A754B3089F76C5310 /* Pods-MYKeyboard.release.xcconfig */,
+				7342A40FB580DAE51132B86E /* Pods-MiYKeyboard.debug.xcconfig */,
+				3D874EEC497A95C54849D2D1 /* Pods-MiYKeyboard.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -233,9 +241,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6D38EC181E80027300A8E605 /* Build configuration list for PBXNativeTarget "MiYKeyboard" */;
 			buildPhases = (
+				E68FE969C866EC0D4E53155D /* [CP] Check Pods Manifest.lock */,
 				6D38EC0A1E80027300A8E605 /* Sources */,
 				6D38EC0B1E80027300A8E605 /* Frameworks */,
 				6D38EC0C1E80027300A8E605 /* Resources */,
+				BA673C9373A0D5C10B9BC597 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -420,6 +430,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MYKeyboard/Pods-MYKeyboard-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		BA673C9373A0D5C10B9BC597 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MiYKeyboard/Pods-MiYKeyboard-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CFD53FBF2836708984B5A8D5 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -433,6 +458,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MYKeyboard/Pods-MYKeyboard-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E68FE969C866EC0D4E53155D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -516,6 +556,7 @@
 /* Begin XCBuildConfiguration section */
 		6D38EC161E80027300A8E605 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7342A40FB580DAE51132B86E /* Pods-MiYKeyboard.debug.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = MiYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -528,6 +569,7 @@
 		};
 		6D38EC171E80027300A8E605 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3D874EEC497A95C54849D2D1 /* Pods-MiYKeyboard.release.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = MiYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";

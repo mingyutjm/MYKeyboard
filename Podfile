@@ -5,3 +5,7 @@ use_frameworks!
 target 'MYKeyboard' do
     pod 'SnapKit', '~> 3.2.0'
 end
+
+target 'MiYKeyboard' do
+    pod 'SnapKit', '~> 3.2.0'
+end

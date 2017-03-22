@@ -24,7 +24,7 @@ class ViewController: UIViewController {
             make.left.equalTo(30)
             make.right.equalTo(-30)
             make.top.equalTo(50)
-            make.height.equalTo(300)
+            make.height.equalTo(200)
         })
 
         

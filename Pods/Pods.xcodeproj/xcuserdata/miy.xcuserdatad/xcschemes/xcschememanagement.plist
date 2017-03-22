@@ -9,6 +9,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Pods-MiYKeyboard.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>SnapKit.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -22,7 +27,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>AC76BD89D53EE2AD287A051E8179FE86</key>
+		<key>79A0045FCDB8A2FA9AF1EE35BC7D38D4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>91A642823CA1775AE7C722A85F1E0768</key>
 		<dict>
 			<key>primary</key>
 			<true/>
