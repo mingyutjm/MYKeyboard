@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class KeyboardViewController: UIInputViewController {
 
     @IBOutlet var nextKeyboardButton: UIButton!
@@ -34,6 +35,10 @@ class KeyboardViewController: UIInputViewController {
         
         self.nextKeyboardButton.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
         self.nextKeyboardButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        
+        
+        let button = createButtonWithTitle("A")
+        self.view.addSubview(button)
     }
     
     override func didReceiveMemoryWarning() {
@@ -57,5 +62,38 @@ class KeyboardViewController: UIInputViewController {
         }
         self.nextKeyboardButton.setTitleColor(textColor, for: [])
     }
+    
+    
+    
+    
+    
+    func createButtonWithTitle(_ title: String) -> UIButton {
+        let button = UIButton(type: .system) as UIButton
+        button.frame = CGRect(x: 0, y: 0, width: 20, height: 20)
+        button.setTitle(title, for: .normal)
+        button.sizeToFit()
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 15)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor(white: 1.0, alpha: 1.0)
+        button.setTitleColor(UIColor.darkGray, for: .normal)
+        button.addTarget(self, action: #selector(KeyboardViewController.didTapButton(_:)), for: .touchUpInside)
+        return button
+    }
+    
+    func didTapButton(_ sender: AnyObject?) {
+        let button = sender as! UIButton
+        let title = button.title(for: .normal)
+        let proxy = textDocumentProxy as UITextDocumentProxy
+        
+        proxy.insertText(title!)
+    } 
+
 
 }
+
+
+
+
+
+
+

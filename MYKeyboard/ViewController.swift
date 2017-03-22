@@ -7,12 +7,27 @@
 //
 
 import UIKit
+import SnapKit
 
 class ViewController: UIViewController {
 
+    let textView = UITextView()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        textView.backgroundColor = UIColor.groupTableViewBackground
+        self.view.addSubview(textView)
+        textView.snp.makeConstraints({ (make) -> Void in
+            make.left.equalTo(30)
+            make.right.equalTo(-30)
+            make.top.equalTo(50)
+            make.height.equalTo(300)
+        })
+
+        
     }
 
     override func didReceiveMemoryWarning() {

@@ -10,6 +10,8 @@
 		2DA8D0FDB2F5AD46AC9BBF1D /* Pods_MYKeyboard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C2A5E10DF91D514D3520E16A /* Pods_MYKeyboard.framework */; };
 		6D38EC111E80027300A8E605 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D38EC101E80027300A8E605 /* KeyboardViewController.swift */; };
 		6D38EC151E80027300A8E605 /* MiYKeyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 6D38EC0E1E80027300A8E605 /* MiYKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6D3F94281E825540000EE05C /* KeyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3F94271E825540000EE05C /* KeyView.swift */; };
+		6D3F942A1E8257E0000EE05C /* KeyboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D3F94291E8257E0000EE05C /* KeyboardModel.swift */; };
 		6D68FAE81E7EC14A003AA407 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D68FAE71E7EC14A003AA407 /* AppDelegate.swift */; };
 		6D68FAEA1E7EC14A003AA407 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D68FAE91E7EC14A003AA407 /* ViewController.swift */; };
 		6D68FAED1E7EC14A003AA407 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D68FAEB1E7EC14A003AA407 /* Main.storyboard */; };
@@ -63,6 +65,8 @@
 		6D38EC0E1E80027300A8E605 /* MiYKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MiYKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D38EC101E80027300A8E605 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		6D38EC121E80027300A8E605 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6D3F94271E825540000EE05C /* KeyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyView.swift; sourceTree = "<group>"; };
+		6D3F94291E8257E0000EE05C /* KeyboardModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardModel.swift; sourceTree = "<group>"; };
 		6D68FAE41E7EC14A003AA407 /* MYKeyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MYKeyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D68FAE71E7EC14A003AA407 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6D68FAE91E7EC14A003AA407 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -125,10 +129,36 @@
 		6D38EC0F1E80027300A8E605 /* MiYKeyboard */ = {
 			isa = PBXGroup;
 			children = (
-				6D38EC101E80027300A8E605 /* KeyboardViewController.swift */,
+				6D3F94261E825526000EE05C /* Controller */,
+				6D3F94251E825520000EE05C /* Model */,
+				6D3F94241E82551A000EE05C /* Views */,
 				6D38EC121E80027300A8E605 /* Info.plist */,
 			);
 			path = MiYKeyboard;
+			sourceTree = "<group>";
+		};
+		6D3F94241E82551A000EE05C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				6D3F94271E825540000EE05C /* KeyView.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		6D3F94251E825520000EE05C /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				6D3F94291E8257E0000EE05C /* KeyboardModel.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		6D3F94261E825526000EE05C /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				6D38EC101E80027300A8E605 /* KeyboardViewController.swift */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 		6D68FADB1E7EC14A003AA407 = {
@@ -412,7 +442,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D3F94281E825540000EE05C /* KeyView.swift in Sources */,
 				6D38EC111E80027300A8E605 /* KeyboardViewController.swift in Sources */,
+				6D3F942A1E8257E0000EE05C /* KeyboardModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -691,6 +723,7 @@
 				6D38EC171E80027300A8E605 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6D68FADF1E7EC14A003AA407 /* Build configuration list for PBXProject "MYKeyboard" */ = {
 			isa = XCConfigurationList;
