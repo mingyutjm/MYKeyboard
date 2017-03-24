@@ -13,7 +13,7 @@ class SymbolKeyStore {
     var allSymbols: [Key] = []
     
     init() {
-        let defaultKeys = [" ，", " 。", " ~ ", " ？", " ！", " 、"]
+        let defaultKeys = [" ，", " 。", "~", " ？", " ！", " 、"]
 
         for symbol in defaultKeys {
             let key = Key(withTitle: symbol, andType: .symbol)
