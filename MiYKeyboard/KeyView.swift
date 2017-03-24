@@ -28,7 +28,6 @@ class KeyView: UIControl {
         titleLabel.textAlignment = .center
         self.addSubview(titleLabel)
         
-        
     }
     
     
@@ -63,6 +62,11 @@ class KeyView: UIControl {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
+        updateBackgroundColorWithType(key!.type)
+    }
+    
+    override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesCancelled(touches, with: event)
         updateBackgroundColorWithType(key!.type)
     }
 

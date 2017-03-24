@@ -9,15 +9,13 @@
 import UIKit
 import SnapKit
 
+let bannerHeight = 55 as CGFloat
+let lineColor = UIColor.lightGray
 
 
-class KeyboardViewController: UIInputViewController {
+class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    @IBOutlet var nextKeyboardButton: UIButton!
-    
-    let bannerHeight = 55 as CGFloat
-    
-    
+    var symbolStore = SymbolKeyStore()
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -29,19 +27,6 @@ class KeyboardViewController: UIInputViewController {
         super.viewDidLoad()
 
         // Perform custom UI setup here
-        self.nextKeyboardButton = UIButton(type: .system)
-        
-        self.nextKeyboardButton.setTitle(NSLocalizedString("Next Keyboard", comment: "Title for 'Next Keyboard' button"), for: [])
-        self.nextKeyboardButton.sizeToFit()
-        self.nextKeyboardButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        self.nextKeyboardButton.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
-        
-        self.view.addSubview(self.nextKeyboardButton)
-        
-        self.nextKeyboardButton.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        self.nextKeyboardButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        
 
         let keyboardView = defaultKeyboard()
         self.inputView?.addSubview(keyboardView)
@@ -52,15 +37,7 @@ class KeyboardViewController: UIInputViewController {
 
 //216
 
-//        let key = Key(withTitle: "ABC", andType: .return)
-//        let keyView = KeyView(withKey: key)
-//        self.view.addSubview(keyView)
-//        keyView.snp.makeConstraints({ (make) -> Void in
-//            make.left.top.equalToSuperview()
-//            make.width.equalToSuperview().multipliedBy(0.75)
-//            make.height.equalTo(50)
-//        })
-//        keyView.addTarget(self, action: #selector(KeyboardViewController.didTapButton(_:)), for: .touchDown)
+
     }
     
     
@@ -76,24 +53,24 @@ class KeyboardViewController: UIInputViewController {
     override func textDidChange(_ textInput: UITextInput?) {
         // The app has just changed the document's contents, the document context has been updated.
         
-        var textColor: UIColor
-        let proxy = self.textDocumentProxy
-        if proxy.keyboardAppearance == UIKeyboardAppearance.dark {
-            textColor = UIColor.white
-        } else {
-            textColor = UIColor.black
-        }
-        self.nextKeyboardButton.setTitleColor(textColor, for: [])
+//        var textColor: UIColor
+//        let proxy = self.textDocumentProxy
+//        if proxy.keyboardAppearance == UIKeyboardAppearance.dark {
+//            textColor = UIColor.white
+//        } else {
+//            textColor = UIColor.black
+//        }
+//        self.nextKeyboardButton.setTitleColor(textColor, for: [])
     }
     
     
     func didTapButton(_ sender: KeyView) {
-//        let color = sender.backgroundColor
-//        if color == UIColor.lightText {
-//            sender.backgroundColor = UIColor.white
-//        } else {
-//            sender.backgroundColor = UIColor.lightText
-//        }
+        let color = sender.backgroundColor
+        if color == UIColor.lightText {
+            sender.backgroundColor = UIColor.white
+        } else {
+            sender.backgroundColor = UIColor.lightText
+        }
         
         let proxy = textDocumentProxy as UITextDocumentProxy
 
@@ -101,12 +78,6 @@ class KeyboardViewController: UIInputViewController {
         proxy.insertText(sender.titleLabel.text!)
     } 
     
-//    override func loadView() {
-//        super.loadView()
-//        
-//        
-//    }
-
     
     func defaultKeyboard() -> UIView {
         
@@ -132,79 +103,37 @@ class KeyboardViewController: UIInputViewController {
 
         
         
-        //左
-        let scrollView = UIScrollView()
-        scrollView.isScrollEnabled = true
-        scrollView.backgroundColor = grayColor
-        bottomView.addSubview(scrollView)
-        scrollView.snp.makeConstraints({ (make) -> Void in
+        // MARK: 左 Collection View
+        let layout = UICollectionViewFlowLayout.init()
+        layout.scrollDirection = .vertical
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 0
+        layout.itemSize = CGSize(width: 75, height: 40.5)
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.delaysContentTouches = false
+        collectionView.canCancelContentTouches = true
+        collectionView.backgroundColor = grayColor
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(SymbolCell.self, forCellWithReuseIdentifier: "SymbolCell")
+
+        
+        bottomView.addSubview(collectionView)
+        collectionView.snp.makeConstraints({ (make) -> Void in
             make.top.left.equalToSuperview()
             make.width.equalToSuperview().dividedBy(5)
             make.height.equalToSuperview().multipliedBy(0.75)
         })
-        let viewL0 = KeyView(withKey: Key(withTitle: " ，", andType: .symbol))
-        let viewL1 = KeyView(withKey: Key(withTitle: " 。", andType: .symbol))
-        let viewL2 = KeyView(withKey: Key(withTitle: "~", andType: .symbol))
-        let viewL3 = KeyView(withKey: Key(withTitle: " ？", andType: .symbol))
-        let viewL4 = KeyView(withKey: Key(withTitle: " ！", andType: .symbol))
-        let viewL5 = KeyView(withKey: Key(withTitle: " 、", andType: .symbol))
-        let contentView = UIView()
-        contentView.backgroundColor = UIColor.lightGray
-        scrollView.addSubview(contentView)
-        contentView.snp.makeConstraints({ (make) -> Void in
-            make.edges.equalTo(scrollView)
-            make.width.equalTo(scrollView)
-        })
-        contentView.addSubview(viewL0)
-        contentView.addSubview(viewL1)
-        contentView.addSubview(viewL2)
-        contentView.addSubview(viewL3)
-        contentView.addSubview(viewL4)
-        contentView.addSubview(viewL5)
-        viewL0.snp.makeConstraints({ (make) -> Void in
-            make.top.left.right.equalToSuperview()
-            make.width.equalTo(bottomView).dividedBy(5)
-            make.height.equalTo(bottomView).multipliedBy(0.1875)
-        })
-        viewL1.snp.makeConstraints({ (make) -> Void in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(viewL0.snp.bottom).offset(0.5)
-            make.width.height.equalTo(viewL0)
-        })
-        viewL2.snp.makeConstraints({ (make) -> Void in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(viewL1.snp.bottom).offset(0.5)
-            make.width.height.equalTo(viewL0)
-        })
-        viewL3.snp.makeConstraints({ (make) -> Void in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(viewL2.snp.bottom).offset(0.5)
-            make.width.height.equalTo(viewL0)
-        })
-        viewL4.snp.makeConstraints({ (make) -> Void in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(viewL3.snp.bottom).offset(0.5)
-            make.width.height.equalTo(viewL0)
-        })
-        viewL5.snp.makeConstraints({ (make) -> Void in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(viewL4.snp.bottom).offset(0.5)
-            make.width.height.equalTo(viewL0)
-        })
-        contentView.snp.makeConstraints({ (make) -> Void in
-            make.bottom.equalTo(viewL5)
-        })
-
         
         
-        //左下
+        // MARK: 左下
         let leftBottonView = UIView()
 //        leftBottonView.backgroundColor = UIColor.yellow
         bottomView.addSubview(leftBottonView)
         leftBottonView.snp.makeConstraints({ (make) -> Void in
             make.left.bottom.equalToSuperview()
-            make.top.equalTo(scrollView.snp.bottom)
-            make.width.equalTo(scrollView)
+            make.top.equalTo(collectionView.snp.bottom)
+            make.width.equalTo(collectionView)
         })
         let viewLB = KeyView(withKey: Key(withTitle: "变", andType: .nextKeyboard))
         viewLB.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
@@ -213,12 +142,12 @@ class KeyboardViewController: UIInputViewController {
             make.edges.equalToSuperview()
         })
         
-        //右
+        // MARK: 右
         let rightView = UIView()
 //        rightView.backgroundColor = UIColor.blue
         bottomView.addSubview(rightView)
         rightView.snp.makeConstraints({ (make) -> Void in
-            make.width.equalTo(scrollView)
+            make.width.equalTo(collectionView)
             make.top.right.bottom.equalToSuperview()
         })
         
@@ -242,17 +171,13 @@ class KeyboardViewController: UIInputViewController {
             make.left.right.bottom.equalToSuperview()
         })
 
-
-        
-        
-        
-        //中
+        // MARK: 中
         let centerView = UIView()
 //        centerView.backgroundColor = UIColor.cyan
         bottomView.addSubview(centerView)
         centerView.snp.makeConstraints({ (make) -> Void in
             make.top.bottom.equalToSuperview()
-            make.left.equalTo(scrollView.snp.right)
+            make.left.equalTo(collectionView.snp.right)
             make.right.equalTo(rightView.snp.left)
         })
         
@@ -277,9 +202,8 @@ class KeyboardViewController: UIInputViewController {
         
         //加线
         let thickness = 0.5
-        let color = UIColor.lightGray
-        let lineBanner0 = UIView(); lineBanner0.backgroundColor = color
-        let lineBanner1 = UIView(); lineBanner1.backgroundColor = color
+        let lineBanner0 = UIView(); lineBanner0.backgroundColor = lineColor
+        let lineBanner1 = UIView(); lineBanner1.backgroundColor = lineColor
         bannerView.addSubview(lineBanner0)
         bannerView.addSubview(lineBanner1)
         lineBanner0.snp.makeConstraints({ (make) -> Void in
@@ -293,14 +217,14 @@ class KeyboardViewController: UIInputViewController {
         })
 
         
-        let lineMid0 = UIView(); lineMid0.backgroundColor = color
-        let lineMid1 = UIView(); lineMid1.backgroundColor = color
-        let lineMid2 = UIView(); lineMid2.backgroundColor = color
-        let lineMid3 = UIView(); lineMid3.backgroundColor = color
-        let lineMid4 = UIView(); lineMid4.backgroundColor = color
-        let lineMid5 = UIView(); lineMid5.backgroundColor = color
-        let lineMid6 = UIView(); lineMid6.backgroundColor = color
-        let lineMid7 = UIView(); lineMid7.backgroundColor = color
+        let lineMid0 = UIView(); lineMid0.backgroundColor = lineColor
+        let lineMid1 = UIView(); lineMid1.backgroundColor = lineColor
+        let lineMid2 = UIView(); lineMid2.backgroundColor = lineColor
+        let lineMid3 = UIView(); lineMid3.backgroundColor = lineColor
+        let lineMid4 = UIView(); lineMid4.backgroundColor = lineColor
+        let lineMid5 = UIView(); lineMid5.backgroundColor = lineColor
+        let lineMid6 = UIView(); lineMid6.backgroundColor = lineColor
+        let lineMid7 = UIView(); lineMid7.backgroundColor = lineColor
         bottomView.addSubview(lineMid0)
         bottomView.addSubview(lineMid1)
         bottomView.addSubview(lineMid2)
@@ -395,11 +319,45 @@ class KeyboardViewController: UIInputViewController {
             }
         }
     }
+    
+    
+    // MARK: Collection View Delegate
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return symbolStore.allSymbols.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
+        cell.addKey(symbolStore.allSymbols[indexPath.row])
+        
+        
+        return cell
+    }
+    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        
+//        let width = collectionView.bounds.width
+//        let height = collectionView.bounds.height
+//        let size = CGSize(width: width, height: height/4)
+//        return size
+//    }
+
+
 }
 
-
-
-
+//扩展UICollectionView 使得滑动scrollView可以取消UIControl的点击事件
+extension UICollectionView {
+    override open func touchesShouldCancel(in view: UIView) -> Bool {
+        return true
+    }
+}
 
 
 
