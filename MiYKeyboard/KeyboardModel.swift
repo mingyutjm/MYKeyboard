@@ -24,10 +24,12 @@ class Key {
     
     let title: String?
     let type: KeyType
+    let typeId: Int?
     var outputText: String?
     
-    init(withTitle title:String, andType type: KeyType) {
+    init(withTitle title:String, andType type: KeyType, typeId: Int? = nil) {
         
+        self.typeId = typeId
         self.title = title
         self.type = type
         createOutputTextWithType(type)
@@ -36,8 +38,8 @@ class Key {
     func createOutputTextWithType(_ type: KeyType) {
         
         switch type {
-        case .normal:
-            outputText = title
+//        case .normal:
+//            outputText = title
         case .symbol:
             outputText = title
         case .number:

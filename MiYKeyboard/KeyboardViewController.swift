@@ -11,11 +11,13 @@ import SnapKit
 
 let bannerHeight = 55 as CGFloat
 let lineColor = UIColor.lightGray
+let lineThickness = 0.5
 
 
 class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
     var symbolStore = SymbolKeyStore()
+    var keysDictionary = [String: KeyView]()
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -101,8 +103,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.left.right.bottom.equalToSuperview()
         })
 
-        
-        
         // MARK: 左 Collection View
         let layout = UICollectionViewFlowLayout.init()
         layout.scrollDirection = .vertical
@@ -116,7 +116,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.register(SymbolCell.self, forCellWithReuseIdentifier: "SymbolCell")
-
         
         bottomView.addSubview(collectionView)
         collectionView.snp.makeConstraints({ (make) -> Void in
@@ -144,7 +143,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         
         // MARK: 右
         let rightView = UIView()
-//        rightView.backgroundColor = UIColor.blue
         bottomView.addSubview(rightView)
         rightView.snp.makeConstraints({ (make) -> Void in
             make.width.equalTo(collectionView)
@@ -171,9 +169,9 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.left.right.bottom.equalToSuperview()
         })
 
+        
         // MARK: 中
         let centerView = UIView()
-//        centerView.backgroundColor = UIColor.cyan
         bottomView.addSubview(centerView)
         centerView.snp.makeConstraints({ (make) -> Void in
             make.top.bottom.equalToSuperview()
@@ -181,39 +179,54 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.right.equalTo(rightView.snp.left)
         })
         
-        let view11 = KeyView(withKey: Key(withTitle: "符号", andType: .changeToSymbol))
-        let view12 = KeyView(withKey: Key(withTitle: "ABC", andType: .normal))
-        let view13 = KeyView(withKey: Key(withTitle: "DEF", andType: .normal))
-        let view21 = KeyView(withKey: Key(withTitle: "GHI", andType: .normal))
-        let view22 = KeyView(withKey: Key(withTitle: "JKL", andType: .normal))
-        let view23 = KeyView(withKey: Key(withTitle: "MNO", andType: .normal))
-        let view31 = KeyView(withKey: Key(withTitle: "PQRS", andType: .normal))
-        let view32 = KeyView(withKey: Key(withTitle: "TUV", andType: .normal))
-        let view33 = KeyView(withKey: Key(withTitle: "WXYZ", andType: .normal))
+        let view11 = KeyView(withKey: Key(withTitle: "符号", andType: .changeToSymbol, typeId: 1))  //1
+        let view12 = KeyView(withKey: Key(withTitle: "ABC", andType: .normal, typeId: 2))          //2
+        let view13 = KeyView(withKey: Key(withTitle: "DEF", andType: .normal, typeId: 3))          //3
+        let view21 = KeyView(withKey: Key(withTitle: "GHI", andType: .normal, typeId: 4))          //4
+        let view22 = KeyView(withKey: Key(withTitle: "JKL", andType: .normal, typeId: 5))          //5
+        let view23 = KeyView(withKey: Key(withTitle: "MNO", andType: .normal, typeId: 6))          //6
+        let view31 = KeyView(withKey: Key(withTitle: "PQRS", andType: .normal, typeId: 7))         //7
+        let view32 = KeyView(withKey: Key(withTitle: "TUV", andType: .normal, typeId: 8))          //8
+        let view33 = KeyView(withKey: Key(withTitle: "WXYZ", andType: .normal, typeId: 9))         //9
         let view41 = KeyView(withKey: Key(withTitle: "123", andType: .changeToNumber))
-        let view42 = KeyView(withKey: Key(withTitle: "空格", andType: .space))
+        let view42 = KeyView(withKey: Key(withTitle: "空格", andType: .space, typeId: 0))           //0
         let arrMid = [view11, view12, view13, view21, view22, view23, view31, view32, view33, view41, view42]
         for view in arrMid {
             centerView.addSubview(view)
         }
         
+        // MARK:
+        keysDictionary["删除"] = viewR1
+        keysDictionary["换行"] = viewR2
+        keysDictionary["发送"] = viewR3
+        keysDictionary["1"] = view11
+        keysDictionary["2"] = view12
+        keysDictionary["3"] = view13
+        keysDictionary["4"] = view21
+        keysDictionary["5"] = view22
+        keysDictionary["6"] = view23
+        keysDictionary["7"] = view31
+        keysDictionary["8"] = view32
+        keysDictionary["9"] = view33
+        keysDictionary["0"] = view42
+        keysDictionary["123"] = view41
+        
+        
         addConstraintsToMid(centerView, arrMid)
         
-        
         //加线
-        let thickness = 0.5
         let lineBanner0 = UIView(); lineBanner0.backgroundColor = lineColor
         let lineBanner1 = UIView(); lineBanner1.backgroundColor = lineColor
         bannerView.addSubview(lineBanner0)
         bannerView.addSubview(lineBanner1)
         lineBanner0.snp.makeConstraints({ (make) -> Void in
             make.top.left.right.equalToSuperview()
-            make.height.equalTo(thickness)
+            make.height.equalTo(lineThickness)
         })
         lineBanner1.snp.makeConstraints({ (make) -> Void in
             make.top.equalTo(bannerHeight*2/5)
             make.left.right.equalToSuperview()
-            make.height.equalTo(thickness)
+            make.height.equalTo(lineThickness)
         })
 
         
@@ -235,55 +248,90 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         bottomView.addSubview(lineMid7)
         lineMid0.snp.makeConstraints({ (make) -> Void in
             make.top.left.right.equalToSuperview()
-            make.height.equalTo(thickness)
+            make.height.equalTo(lineThickness)
         })
         lineMid1.snp.makeConstraints({ (make) -> Void in
             make.top.equalTo(view11.snp.bottom)
             make.left.equalTo(centerView)
             make.right.equalToSuperview()
-            make.height.equalTo(thickness)
+            make.height.equalTo(lineThickness)
         })
         lineMid2.snp.makeConstraints({ (make) -> Void in
             make.top.equalTo(view21.snp.bottom)
             make.left.equalTo(centerView)
-            make.height.equalTo(thickness)
+            make.height.equalTo(lineThickness)
             make.right.equalToSuperview()
         })
         lineMid3.snp.makeConstraints({ (make) -> Void in
             make.top.equalTo(view31.snp.bottom)
             make.left.equalToSuperview()
             make.right.equalTo(centerView)
-            make.height.equalTo(thickness)
+            make.height.equalTo(lineThickness)
         })
         lineMid4.snp.makeConstraints({ (make) -> Void in
             make.top.bottom.equalToSuperview()
             make.left.equalTo(centerView)
-            make.width.equalTo(thickness)
+            make.width.equalTo(lineThickness)
         })
         lineMid5.snp.makeConstraints({ (make) -> Void in
             make.top.bottom.equalToSuperview()
             make.left.equalTo(view12)
-            make.width.equalTo(thickness)
+            make.width.equalTo(lineThickness)
         })
         lineMid6.snp.makeConstraints({ (make) -> Void in
             make.top.equalToSuperview()
             make.bottom.equalTo(view33)
             make.left.equalTo(view13)
-            make.width.equalTo(thickness)
+            make.width.equalTo(lineThickness)
         })
         lineMid7.snp.makeConstraints({ (make) -> Void in
             make.top.bottom.equalToSuperview()
             make.left.equalTo(rightView)
-            make.width.equalTo(thickness)
+            make.width.equalTo(lineThickness)
 
         })
-
+        
+        addTargetToKeys(keysDictionary)
         
         return keyboard
     }
 
-
+    func addTargetToKeys(_ dict: [String: KeyView]) {
+        
+        for (key, value) in dict {
+            switch key {
+            case "2","3","4","5","6","7","8","9":
+                value.addTarget(self, action: #selector(KeyboardViewController.tapNormalKey(_:)), for: .touchDown)
+                
+            default:
+                value.addTarget(self, action: #selector(KeyboardViewController.tapOtherKey(_:)), for: .touchDown)
+            }
+        }
+    }
     
+    func tapNormalKey(_ sender: KeyView) {
+        
+    }
+    
+    func tapOtherKey(_ sender: KeyView) {
+        let proxy = textDocumentProxy as UITextDocumentProxy
+
+        let type = sender.key.type
+        switch type {
+        case .symbol, .number:
+            proxy.insertText(sender.key.outputText!)
+        case .space:
+            proxy.insertText(" ")
+        case .backspace:
+            proxy.deleteBackward()
+        case .return:
+            proxy.insertText("\n")
+        default:
+            break
+        }
+    }
+
+
     func addConstraintsToMid(_ centerView: UIView, _ arr: [KeyView]) {
         var top = centerView.snp.top
         var left = centerView.snp.left
@@ -295,7 +343,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
                     make.left.equalTo(left)
                     make.top.equalTo(top)
                 })
-
                 break
             }
             if index % 3 == 2 {
@@ -336,11 +383,11 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
         cell.addKey(symbolStore.allSymbols[indexPath.row])
-        
+        cell.keyView?.addTarget(self, action: #selector(tapOtherKey(_:)), for: .touchUpInside)
         
         return cell
     }
-    
+
 //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        
 //        let width = collectionView.bounds.width

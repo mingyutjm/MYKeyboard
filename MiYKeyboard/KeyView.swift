@@ -14,7 +14,7 @@ let blueColor = UIColor.init(red: 10/255.0, green: 96/255.0, blue: 254/255.0, al
 class KeyView: UIControl {
     
     let titleLabel = UILabel()
-    let key: Key?
+    let key: Key
     
     init(withKey key: Key) {
         self.key = key
@@ -22,12 +22,10 @@ class KeyView: UIControl {
         super.init(frame: CGRect.zero)
         updateBackgroundColorWithType(key.type)
 
-
         titleLabel.text = key.title
         titleLabel.sizeToFit()
         titleLabel.textAlignment = .center
         self.addSubview(titleLabel)
-        
     }
     
     
@@ -42,8 +40,6 @@ class KeyView: UIControl {
         })
 
         super.layoutSubviews()
-
-        
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -53,7 +49,7 @@ class KeyView: UIControl {
             self.backgroundColor = grayColor
         } else {
             self.backgroundColor = UIColor.white
-            if self.key?.type == .return {
+            if self.key.type == .return {
                 self.titleLabel.textColor = UIColor.black
             }
         }
@@ -62,12 +58,12 @@ class KeyView: UIControl {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        updateBackgroundColorWithType(key!.type)
+        updateBackgroundColorWithType(key.type)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesCancelled(touches, with: event)
-        updateBackgroundColorWithType(key!.type)
+        updateBackgroundColorWithType(key.type)
     }
 
     func updateBackgroundColorWithType(_ type: KeyType) {

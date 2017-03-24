@@ -40,9 +40,8 @@ class SymbolCell: UICollectionViewCell {
         })
         line.snp.makeConstraints({ (make) -> Void in
             make.left.right.bottom.equalToSuperview()
-            make.height.equalTo(0.5)
+            make.height.equalTo(lineThickness)
         })
-
     }
     
 //    init(withKey key: Key) {
