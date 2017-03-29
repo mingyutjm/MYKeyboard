@@ -24,7 +24,8 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     var pinyinLabel: UILabel? = nil
     var wordsCollection: UICollectionView? = nil
     
-//    required init?(coder aDecoder: NSCoder) {
+    var pinyinStore: PinyinStore? = nil
+    //    required init?(coder aDecoder: NSCoder) {
 //        fatalError("init(coder:) has not been implemented")
 //    }
     
@@ -93,7 +94,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     }
     
     func tapNormalKey(_ sender: KeyView) {
-        
+
     }
     
     func tapOtherKey(_ sender: KeyView) {
@@ -105,6 +106,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             proxy.insertText(sender.key.outputText!)
         case .space:
             proxy.insertText(" ")
+
         case .backspace:
             proxy.deleteBackward()
         case .return:
@@ -184,6 +186,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         })
 
     }
+    
     
     // MARK: 默认键盘
     func defaultKeyboard() -> (UIView?, UIView?, UIView?) {
@@ -284,17 +287,17 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.right.equalTo(rightView.snp.left)
         })
         
-        let view11 = KeyView(withKey: Key(withTitle: "符号", andType: .changeToSymbol, typeId: 1))  //1
-        let view12 = KeyView(withKey: Key(withTitle: "ABC", andType: .normal, typeId: 2))          //2
-        let view13 = KeyView(withKey: Key(withTitle: "DEF", andType: .normal, typeId: 3))          //3
-        let view21 = KeyView(withKey: Key(withTitle: "GHI", andType: .normal, typeId: 4))          //4
-        let view22 = KeyView(withKey: Key(withTitle: "JKL", andType: .normal, typeId: 5))          //5
-        let view23 = KeyView(withKey: Key(withTitle: "MNO", andType: .normal, typeId: 6))          //6
-        let view31 = KeyView(withKey: Key(withTitle: "PQRS", andType: .normal, typeId: 7))         //7
-        let view32 = KeyView(withKey: Key(withTitle: "TUV", andType: .normal, typeId: 8))          //8
-        let view33 = KeyView(withKey: Key(withTitle: "WXYZ", andType: .normal, typeId: 9))         //9
+        let view11 = KeyView(withKey: Key(withTitle: "符号", andType: .changeToSymbol, typeId: "1"))  //1
+        let view12 = KeyView(withKey: Key(withTitle: "ABC", andType: .normal, typeId: "2"))          //2
+        let view13 = KeyView(withKey: Key(withTitle: "DEF", andType: .normal, typeId: "3"))          //3
+        let view21 = KeyView(withKey: Key(withTitle: "GHI", andType: .normal, typeId: "4"))          //4
+        let view22 = KeyView(withKey: Key(withTitle: "JKL", andType: .normal, typeId: "5"))          //5
+        let view23 = KeyView(withKey: Key(withTitle: "MNO", andType: .normal, typeId: "6"))          //6
+        let view31 = KeyView(withKey: Key(withTitle: "PQRS", andType: .normal, typeId: "7"))         //7
+        let view32 = KeyView(withKey: Key(withTitle: "TUV", andType: .normal, typeId: "8"))          //8
+        let view33 = KeyView(withKey: Key(withTitle: "WXYZ", andType: .normal, typeId: "9"))         //9
         let view41 = KeyView(withKey: Key(withTitle: "123", andType: .changeToNumber))
-        let view42 = KeyView(withKey: Key(withTitle: "空格", andType: .space, typeId: 0))           //0
+        let view42 = KeyView(withKey: Key(withTitle: "空格", andType: .space, typeId: "0"))           //0
         let arrMid = [view11, view12, view13, view21, view22, view23, view31, view32, view33, view41, view42]
         for view in arrMid {
             centerView.addSubview(view)
@@ -436,6 +439,8 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             let proxy = textDocumentProxy as UITextDocumentProxy
             
             proxy.insertText("www")
+            
+            
         }
     }
     
@@ -456,7 +461,6 @@ extension UICollectionView {
         return true
     }
 }
-
 
 
 

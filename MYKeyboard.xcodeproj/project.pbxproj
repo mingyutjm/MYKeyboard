@@ -17,6 +17,7 @@
 		6D4868121E85393000F89686 /* SymbolKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D4868111E85393000F89686 /* SymbolKeyStore.swift */; };
 		6D48B4A21E8BE25D00B0AD0B /* WordsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D48B4A11E8BE25D00B0AD0B /* WordsCell.swift */; };
 		6D48B4A41E8BF90700B0AD0B /* WordsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D48B4A31E8BF90700B0AD0B /* WordsStore.swift */; };
+		6D48B4A61E8C057400B0AD0B /* PinyinStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D48B4A51E8C057400B0AD0B /* PinyinStore.swift */; };
 		6D68FAE81E7EC14A003AA407 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D68FAE71E7EC14A003AA407 /* AppDelegate.swift */; };
 		6D68FAEA1E7EC14A003AA407 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D68FAE91E7EC14A003AA407 /* ViewController.swift */; };
 		6D68FAED1E7EC14A003AA407 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6D68FAEB1E7EC14A003AA407 /* Main.storyboard */; };
@@ -77,6 +78,7 @@
 		6D4868111E85393000F89686 /* SymbolKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SymbolKeyStore.swift; sourceTree = "<group>"; };
 		6D48B4A11E8BE25D00B0AD0B /* WordsCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordsCell.swift; sourceTree = "<group>"; };
 		6D48B4A31E8BF90700B0AD0B /* WordsStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WordsStore.swift; sourceTree = "<group>"; };
+		6D48B4A51E8C057400B0AD0B /* PinyinStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PinyinStore.swift; sourceTree = "<group>"; };
 		6D68FAE41E7EC14A003AA407 /* MYKeyboard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MYKeyboard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6D68FAE71E7EC14A003AA407 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6D68FAE91E7EC14A003AA407 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 				6D3F94291E8257E0000EE05C /* KeyboardModel.swift */,
 				6D4868111E85393000F89686 /* SymbolKeyStore.swift */,
 				6D48B4A31E8BF90700B0AD0B /* WordsStore.swift */,
+				6D48B4A51E8C057400B0AD0B /* PinyinStore.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D48B4A61E8C057400B0AD0B /* PinyinStore.swift in Sources */,
 				6D4868121E85393000F89686 /* SymbolKeyStore.swift in Sources */,
 				6D3F94281E825540000EE05C /* KeyView.swift in Sources */,
 				6D4868101E8535FB00F89686 /* SymbolCell.swift in Sources */,

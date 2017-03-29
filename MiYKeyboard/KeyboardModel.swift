@@ -26,10 +26,10 @@ class Key {
     
     let title: String?
     let type: KeyType
-    let typeId: Int?
+    let typeId: String?
     var outputText: String?
     
-    init(withTitle title:String, andType type: KeyType, typeId: Int? = nil) {
+    init(withTitle title:String, andType type: KeyType, typeId: String? = nil) {
         
         self.typeId = typeId
         self.title = title
