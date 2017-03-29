@@ -18,6 +18,16 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
     var symbolStore = SymbolKeyStore()
     var keysDictionary = [String: KeyView]()
+    var bannerView: UIView? = nil
+    var bottomView: UIView? = nil
+    var keyboardView: UIView? = nil
+    var pinyinLabel: UILabel? = nil
+    var wordsCollection: UICollectionView? = nil
+    
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
+    
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -25,21 +35,23 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         // Add custom view sizing constraints here
     }
     
+    
+    // MARK: View Controller Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        (keyboardView, bannerView, bottomView) = defaultKeyboard()
+        addViewsToBanner()
+        
         // Perform custom UI setup here
 
-        let keyboardView = defaultKeyboard()
-        self.inputView?.addSubview(keyboardView)
-        keyboardView.snp.makeConstraints({ (make) -> Void in
+        self.inputView?.addSubview(keyboardView!)
+        keyboardView!.snp.makeConstraints({ (make) -> Void in
             make.left.right.bottom.top.equalToSuperview()
             make.height.greaterThanOrEqualTo(216+bannerHeight)
         })
 
 //216
-
-
     }
     
     
@@ -66,236 +78,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     }
     
     
-    func didTapButton(_ sender: KeyView) {
-        let color = sender.backgroundColor
-        if color == UIColor.lightText {
-            sender.backgroundColor = UIColor.white
-        } else {
-            sender.backgroundColor = UIColor.lightText
-        }
-        
-        let proxy = textDocumentProxy as UITextDocumentProxy
-
-        
-        proxy.insertText(sender.titleLabel.text!)
-    } 
-    
-    
-    func defaultKeyboard() -> UIView {
-        
-        let keyboard = UIView(frame: CGRect.zero)
-        
-        //上
-        let bannerView = UIView()
-        keyboard.addSubview(bannerView)
-        bannerView.backgroundColor = UIColor.white
-        bannerView.snp.makeConstraints({ (make) -> Void in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(bannerHeight)
-        })
-        
-        
-        //下
-        let bottomView = UIView()
-        keyboard.addSubview(bottomView)
-        bottomView.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(bannerView.snp.bottom)
-            make.left.right.bottom.equalToSuperview()
-        })
-
-        // MARK: 左 Collection View
-        let layout = UICollectionViewFlowLayout.init()
-        layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.minimumLineSpacing = 0
-        layout.itemSize = CGSize(width: 75, height: 40.5)
-        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        collectionView.delaysContentTouches = false
-        collectionView.canCancelContentTouches = true
-        collectionView.backgroundColor = grayColor
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        collectionView.register(SymbolCell.self, forCellWithReuseIdentifier: "SymbolCell")
-        
-        bottomView.addSubview(collectionView)
-        collectionView.snp.makeConstraints({ (make) -> Void in
-            make.top.left.equalToSuperview()
-            make.width.equalToSuperview().dividedBy(5)
-            make.height.equalToSuperview().multipliedBy(0.75)
-        })
-        
-        
-        // MARK: 左下
-        let leftBottonView = UIView()
-//        leftBottonView.backgroundColor = UIColor.yellow
-        bottomView.addSubview(leftBottonView)
-        leftBottonView.snp.makeConstraints({ (make) -> Void in
-            make.left.bottom.equalToSuperview()
-            make.top.equalTo(collectionView.snp.bottom)
-            make.width.equalTo(collectionView)
-        })
-        let viewLB = KeyView(withKey: Key(withTitle: "变", andType: .nextKeyboard))
-        viewLB.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
-        leftBottonView.addSubview(viewLB)
-        viewLB.snp.makeConstraints({ (make) -> Void in
-            make.edges.equalToSuperview()
-        })
-        
-        // MARK: 右
-        let rightView = UIView()
-        bottomView.addSubview(rightView)
-        rightView.snp.makeConstraints({ (make) -> Void in
-            make.width.equalTo(collectionView)
-            make.top.right.bottom.equalToSuperview()
-        })
-        
-        let viewR1 = KeyView(withKey: Key(withTitle: "⬅︎", andType: .backspace))
-        let viewR2 = KeyView(withKey: Key(withTitle: "换行", andType: .backspace))
-        let viewR3 = KeyView(withKey: Key(withTitle: "发送", andType: .return))
-        rightView.addSubview(viewR1)
-        rightView.addSubview(viewR2)
-        rightView.addSubview(viewR3)
-        viewR1.snp.makeConstraints({ (make) -> Void in
-            make.top.left.right.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(4)
-        })
-        viewR2.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(viewR1.snp.bottom)
-            make.left.right.equalToSuperview()
-            make.height.equalToSuperview().dividedBy(4)
-        })
-        viewR3.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(viewR2.snp.bottom)
-            make.left.right.bottom.equalToSuperview()
-        })
-
-        
-        // MARK: 中
-        let centerView = UIView()
-        bottomView.addSubview(centerView)
-        centerView.snp.makeConstraints({ (make) -> Void in
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(collectionView.snp.right)
-            make.right.equalTo(rightView.snp.left)
-        })
-        
-        let view11 = KeyView(withKey: Key(withTitle: "符号", andType: .changeToSymbol, typeId: 1))  //1
-        let view12 = KeyView(withKey: Key(withTitle: "ABC", andType: .normal, typeId: 2))          //2
-        let view13 = KeyView(withKey: Key(withTitle: "DEF", andType: .normal, typeId: 3))          //3
-        let view21 = KeyView(withKey: Key(withTitle: "GHI", andType: .normal, typeId: 4))          //4
-        let view22 = KeyView(withKey: Key(withTitle: "JKL", andType: .normal, typeId: 5))          //5
-        let view23 = KeyView(withKey: Key(withTitle: "MNO", andType: .normal, typeId: 6))          //6
-        let view31 = KeyView(withKey: Key(withTitle: "PQRS", andType: .normal, typeId: 7))         //7
-        let view32 = KeyView(withKey: Key(withTitle: "TUV", andType: .normal, typeId: 8))          //8
-        let view33 = KeyView(withKey: Key(withTitle: "WXYZ", andType: .normal, typeId: 9))         //9
-        let view41 = KeyView(withKey: Key(withTitle: "123", andType: .changeToNumber))
-        let view42 = KeyView(withKey: Key(withTitle: "空格", andType: .space, typeId: 0))           //0
-        let arrMid = [view11, view12, view13, view21, view22, view23, view31, view32, view33, view41, view42]
-        for view in arrMid {
-            centerView.addSubview(view)
-        }
-        
-        // MARK:
-        keysDictionary["删除"] = viewR1
-        keysDictionary["换行"] = viewR2
-        keysDictionary["发送"] = viewR3
-        keysDictionary["1"] = view11
-        keysDictionary["2"] = view12
-        keysDictionary["3"] = view13
-        keysDictionary["4"] = view21
-        keysDictionary["5"] = view22
-        keysDictionary["6"] = view23
-        keysDictionary["7"] = view31
-        keysDictionary["8"] = view32
-        keysDictionary["9"] = view33
-        keysDictionary["0"] = view42
-        keysDictionary["123"] = view41
-        
-        
-        addConstraintsToMid(centerView, arrMid)
-        
-        //加线
-        let lineBanner0 = UIView(); lineBanner0.backgroundColor = lineColor
-        let lineBanner1 = UIView(); lineBanner1.backgroundColor = lineColor
-        bannerView.addSubview(lineBanner0)
-        bannerView.addSubview(lineBanner1)
-        lineBanner0.snp.makeConstraints({ (make) -> Void in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(lineThickness)
-        })
-        lineBanner1.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(bannerHeight*2/5)
-            make.left.right.equalToSuperview()
-            make.height.equalTo(lineThickness)
-        })
-
-        
-        let lineMid0 = UIView(); lineMid0.backgroundColor = lineColor
-        let lineMid1 = UIView(); lineMid1.backgroundColor = lineColor
-        let lineMid2 = UIView(); lineMid2.backgroundColor = lineColor
-        let lineMid3 = UIView(); lineMid3.backgroundColor = lineColor
-        let lineMid4 = UIView(); lineMid4.backgroundColor = lineColor
-        let lineMid5 = UIView(); lineMid5.backgroundColor = lineColor
-        let lineMid6 = UIView(); lineMid6.backgroundColor = lineColor
-        let lineMid7 = UIView(); lineMid7.backgroundColor = lineColor
-        bottomView.addSubview(lineMid0)
-        bottomView.addSubview(lineMid1)
-        bottomView.addSubview(lineMid2)
-        bottomView.addSubview(lineMid3)
-        bottomView.addSubview(lineMid4)
-        bottomView.addSubview(lineMid5)
-        bottomView.addSubview(lineMid6)
-        bottomView.addSubview(lineMid7)
-        lineMid0.snp.makeConstraints({ (make) -> Void in
-            make.top.left.right.equalToSuperview()
-            make.height.equalTo(lineThickness)
-        })
-        lineMid1.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(view11.snp.bottom)
-            make.left.equalTo(centerView)
-            make.right.equalToSuperview()
-            make.height.equalTo(lineThickness)
-        })
-        lineMid2.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(view21.snp.bottom)
-            make.left.equalTo(centerView)
-            make.height.equalTo(lineThickness)
-            make.right.equalToSuperview()
-        })
-        lineMid3.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(view31.snp.bottom)
-            make.left.equalToSuperview()
-            make.right.equalTo(centerView)
-            make.height.equalTo(lineThickness)
-        })
-        lineMid4.snp.makeConstraints({ (make) -> Void in
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(centerView)
-            make.width.equalTo(lineThickness)
-        })
-        lineMid5.snp.makeConstraints({ (make) -> Void in
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(view12)
-            make.width.equalTo(lineThickness)
-        })
-        lineMid6.snp.makeConstraints({ (make) -> Void in
-            make.top.equalToSuperview()
-            make.bottom.equalTo(view33)
-            make.left.equalTo(view13)
-            make.width.equalTo(lineThickness)
-        })
-        lineMid7.snp.makeConstraints({ (make) -> Void in
-            make.top.bottom.equalToSuperview()
-            make.left.equalTo(rightView)
-            make.width.equalTo(lineThickness)
-
-        })
-        
-        addTargetToKeys(keysDictionary)
-        
-        return keyboard
-    }
-
+    // MARK: 自定义
     func addTargetToKeys(_ dict: [String: KeyView]) {
         
         for (key, value) in dict {
@@ -367,6 +150,257 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         }
     }
     
+    func addViewsToBanner() {
+        
+        pinyinLabel = UILabel()
+        
+        bannerView?.addSubview(pinyinLabel!)
+        pinyinLabel!.snp.makeConstraints({ (make) -> Void in
+            make.left.equalTo(10)
+            make.right.equalToSuperview()
+            make.top.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.4)
+        })
+
+        let layout = UICollectionViewFlowLayout.init()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 5
+        layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight*2/5)
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.delaysContentTouches = false
+        collectionView.canCancelContentTouches = true
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(WordsCell.self, forCellWithReuseIdentifier: "WordsCell")
+        
+        wordsCollection = collectionView
+        bannerView?.addSubview(wordsCollection!)
+        wordsCollection!.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(pinyinLabel!.snp.bottom)
+            make.left.right.equalTo(pinyinLabel!)
+            make.bottom.equalToSuperview()
+        })
+
+    }
+    
+    // MARK: 默认键盘
+    func defaultKeyboard() -> (UIView?, UIView?, UIView?) {
+        
+        let keyboard = UIView(frame: CGRect.zero)
+        
+        //上
+        let bannerView = UIView()
+        keyboard.addSubview(bannerView)
+        bannerView.backgroundColor = UIColor.white
+        bannerView.snp.makeConstraints({ (make) -> Void in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(bannerHeight)
+        })
+        
+        
+        //下
+        let bottomView = UIView()
+        keyboard.addSubview(bottomView)
+        bottomView.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(bannerView.snp.bottom)
+            make.left.right.bottom.equalToSuperview()
+        })
+        
+        // MARK: 左 Collection View
+        let layout = UICollectionViewFlowLayout.init()
+        layout.scrollDirection = .vertical
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 0
+        layout.itemSize = CGSize(width: 75, height: 40.5)
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        collectionView.delaysContentTouches = false
+        collectionView.canCancelContentTouches = true
+        collectionView.backgroundColor = grayColor
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        collectionView.register(SymbolCell.self, forCellWithReuseIdentifier: "SymbolCell")
+        
+        bottomView.addSubview(collectionView)
+        collectionView.snp.makeConstraints({ (make) -> Void in
+            make.top.left.equalToSuperview()
+            make.width.equalToSuperview().dividedBy(5)
+            make.height.equalToSuperview().multipliedBy(0.75)
+        })
+        
+        
+        // MARK: 左下
+        let leftBottonView = UIView()
+        //        leftBottonView.backgroundColor = UIColor.yellow
+        bottomView.addSubview(leftBottonView)
+        leftBottonView.snp.makeConstraints({ (make) -> Void in
+            make.left.bottom.equalToSuperview()
+            make.top.equalTo(collectionView.snp.bottom)
+            make.width.equalTo(collectionView)
+        })
+        let viewLB = KeyView(withKey: Key(withTitle: "变", andType: .nextKeyboard))
+        viewLB.addTarget(self, action: #selector(handleInputModeList(from:with:)), for: .allTouchEvents)
+        leftBottonView.addSubview(viewLB)
+        viewLB.snp.makeConstraints({ (make) -> Void in
+            make.edges.equalToSuperview()
+        })
+        
+        // MARK: 右
+        let rightView = UIView()
+        bottomView.addSubview(rightView)
+        rightView.snp.makeConstraints({ (make) -> Void in
+            make.width.equalTo(collectionView)
+            make.top.right.bottom.equalToSuperview()
+        })
+        
+        let viewR1 = KeyView(withKey: Key(withTitle: "⬅︎", andType: .backspace))
+        let viewR2 = KeyView(withKey: Key(withTitle: "换行", andType: .backspace))
+        let viewR3 = KeyView(withKey: Key(withTitle: "发送", andType: .return))
+        rightView.addSubview(viewR1)
+        rightView.addSubview(viewR2)
+        rightView.addSubview(viewR3)
+        viewR1.snp.makeConstraints({ (make) -> Void in
+            make.top.left.right.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(4)
+        })
+        viewR2.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(viewR1.snp.bottom)
+            make.left.right.equalToSuperview()
+            make.height.equalToSuperview().dividedBy(4)
+        })
+        viewR3.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(viewR2.snp.bottom)
+            make.left.right.bottom.equalToSuperview()
+        })
+        
+        
+        // MARK: 中
+        let centerView = UIView()
+        bottomView.addSubview(centerView)
+        centerView.snp.makeConstraints({ (make) -> Void in
+            make.top.bottom.equalToSuperview()
+            make.left.equalTo(collectionView.snp.right)
+            make.right.equalTo(rightView.snp.left)
+        })
+        
+        let view11 = KeyView(withKey: Key(withTitle: "符号", andType: .changeToSymbol, typeId: 1))  //1
+        let view12 = KeyView(withKey: Key(withTitle: "ABC", andType: .normal, typeId: 2))          //2
+        let view13 = KeyView(withKey: Key(withTitle: "DEF", andType: .normal, typeId: 3))          //3
+        let view21 = KeyView(withKey: Key(withTitle: "GHI", andType: .normal, typeId: 4))          //4
+        let view22 = KeyView(withKey: Key(withTitle: "JKL", andType: .normal, typeId: 5))          //5
+        let view23 = KeyView(withKey: Key(withTitle: "MNO", andType: .normal, typeId: 6))          //6
+        let view31 = KeyView(withKey: Key(withTitle: "PQRS", andType: .normal, typeId: 7))         //7
+        let view32 = KeyView(withKey: Key(withTitle: "TUV", andType: .normal, typeId: 8))          //8
+        let view33 = KeyView(withKey: Key(withTitle: "WXYZ", andType: .normal, typeId: 9))         //9
+        let view41 = KeyView(withKey: Key(withTitle: "123", andType: .changeToNumber))
+        let view42 = KeyView(withKey: Key(withTitle: "空格", andType: .space, typeId: 0))           //0
+        let arrMid = [view11, view12, view13, view21, view22, view23, view31, view32, view33, view41, view42]
+        for view in arrMid {
+            centerView.addSubview(view)
+        }
+        
+        // MARK:
+        keysDictionary["删除"] = viewR1
+        keysDictionary["换行"] = viewR2
+        keysDictionary["发送"] = viewR3
+        keysDictionary["1"] = view11
+        keysDictionary["2"] = view12
+        keysDictionary["3"] = view13
+        keysDictionary["4"] = view21
+        keysDictionary["5"] = view22
+        keysDictionary["6"] = view23
+        keysDictionary["7"] = view31
+        keysDictionary["8"] = view32
+        keysDictionary["9"] = view33
+        keysDictionary["0"] = view42
+        keysDictionary["123"] = view41
+        
+        
+        addConstraintsToMid(centerView, arrMid)
+        
+        //加线
+        let lineBanner0 = UIView(); lineBanner0.backgroundColor = lineColor
+        let lineBanner1 = UIView(); lineBanner1.backgroundColor = lineColor
+        bannerView.addSubview(lineBanner0)
+        bannerView.addSubview(lineBanner1)
+        lineBanner0.snp.makeConstraints({ (make) -> Void in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(lineThickness)
+        })
+        lineBanner1.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(bannerHeight*2/5)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(lineThickness)
+        })
+        
+        
+        let lineMid0 = UIView(); lineMid0.backgroundColor = lineColor
+        let lineMid1 = UIView(); lineMid1.backgroundColor = lineColor
+        let lineMid2 = UIView(); lineMid2.backgroundColor = lineColor
+        let lineMid3 = UIView(); lineMid3.backgroundColor = lineColor
+        let lineMid4 = UIView(); lineMid4.backgroundColor = lineColor
+        let lineMid5 = UIView(); lineMid5.backgroundColor = lineColor
+        let lineMid6 = UIView(); lineMid6.backgroundColor = lineColor
+        let lineMid7 = UIView(); lineMid7.backgroundColor = lineColor
+        bottomView.addSubview(lineMid0)
+        bottomView.addSubview(lineMid1)
+        bottomView.addSubview(lineMid2)
+        bottomView.addSubview(lineMid3)
+        bottomView.addSubview(lineMid4)
+        bottomView.addSubview(lineMid5)
+        bottomView.addSubview(lineMid6)
+        bottomView.addSubview(lineMid7)
+        lineMid0.snp.makeConstraints({ (make) -> Void in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(lineThickness)
+        })
+        lineMid1.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(view11.snp.bottom)
+            make.left.equalTo(centerView)
+            make.right.equalToSuperview()
+            make.height.equalTo(lineThickness)
+        })
+        lineMid2.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(view21.snp.bottom)
+            make.left.equalTo(centerView)
+            make.height.equalTo(lineThickness)
+            make.right.equalToSuperview()
+        })
+        lineMid3.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(view31.snp.bottom)
+            make.left.equalToSuperview()
+            make.right.equalTo(centerView)
+            make.height.equalTo(lineThickness)
+        })
+        lineMid4.snp.makeConstraints({ (make) -> Void in
+            make.top.bottom.equalToSuperview()
+            make.left.equalTo(centerView)
+            make.width.equalTo(lineThickness)
+        })
+        lineMid5.snp.makeConstraints({ (make) -> Void in
+            make.top.bottom.equalToSuperview()
+            make.left.equalTo(view12)
+            make.width.equalTo(lineThickness)
+        })
+        lineMid6.snp.makeConstraints({ (make) -> Void in
+            make.top.equalToSuperview()
+            make.bottom.equalTo(view33)
+            make.left.equalTo(view13)
+            make.width.equalTo(lineThickness)
+        })
+        lineMid7.snp.makeConstraints({ (make) -> Void in
+            make.top.bottom.equalToSuperview()
+            make.left.equalTo(rightView)
+            make.width.equalTo(lineThickness)
+            
+        })
+        
+        addTargetToKeys(keysDictionary)
+        
+        return (keyboard, bannerView, bottomView)
+    }
+
     
     // MARK: Collection View Delegate
     
@@ -381,13 +415,30 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
-        cell.addKey(symbolStore.allSymbols[indexPath.row])
-        cell.keyView?.addTarget(self, action: #selector(tapOtherKey(_:)), for: .touchUpInside)
         
-        return cell
+        if collectionView === self.wordsCollection {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WordsCell", for: indexPath) as! WordsCell
+            cell.wordslabel.text = "我我我我我"
+            return cell
+
+        } else {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
+            cell.addKey(symbolStore.allSymbols[indexPath.row])
+            cell.keyView?.addTarget(self, action: #selector(tapOtherKey(_:)), for: .touchUpInside)
+            return cell
+        }
+        
     }
 
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+        if collectionView === self.wordsCollection {
+            let proxy = textDocumentProxy as UITextDocumentProxy
+            
+            proxy.insertText("www")
+        }
+    }
+    
 //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        
 //        let width = collectionView.bounds.width

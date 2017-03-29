@@ -8,12 +8,6 @@
 
 import UIKit
 
-class MyCollectionView: UICollectionView {
-    override func touchesShouldCancel(in view: UIView) -> Bool {
-        return true
-    }
-}
-
 class SymbolCell: UICollectionViewCell {
     
     var keyView: KeyView?
@@ -26,7 +20,6 @@ class SymbolCell: UICollectionViewCell {
         
     }
 
-    
     func addKey(_ key: Key) {
         
         keyView = KeyView(withKey: key)

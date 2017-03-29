@@ -18,6 +18,8 @@ enum KeyType {
     case changeToNumber //切换到数字输入面板
     case changeToSymbol //切换到符号面板
     case number         //数字
+    case dismiss        //关闭键盘
+    case moreWords      //更多候选词
 }
 
 class Key {

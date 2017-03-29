@@ -1,0 +1,47 @@
+//
+//  WordsCell.swift
+//  MYKeyboard
+//
+//  Created by MiY on 2017/3/29.
+//  Copyright © 2017年 MiY. All rights reserved.
+//
+
+import UIKit
+
+class WordsCell: UICollectionViewCell {
+    
+    var wordslabel = UILabel()
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        
+        self.contentView.addSubview(wordslabel)
+        
+        self.contentView.snp.makeConstraints({ (make) -> Void in
+            make.top.left.equalToSuperview()
+            make.height.equalTo(bannerHeight*2/5)
+            make.right.equalTo(wordslabel)
+        })
+        
+        wordslabel.textAlignment = .center
+        wordslabel.sizeToFit()
+        wordslabel.textColor = UIColor.black
+        wordslabel.snp.makeConstraints({ (make) -> Void in
+            make.left.top.bottom.equalToSuperview()
+            make.width.greaterThanOrEqualTo(46.875).priority(1000)
+        })
+    }
+    
+    
+    override func layoutSubviews() {
+        
+        super.layoutSubviews()
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+}
