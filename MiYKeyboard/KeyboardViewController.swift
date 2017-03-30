@@ -462,6 +462,28 @@ extension UICollectionView {
     }
 }
 
+extension String {
+    subscript (bounds: CountableClosedRange<Int>) -> String {
+        get {
+            let startIndex = self.index(self.startIndex, offsetBy: bounds.lowerBound)
+            let endIndex = self.index(self.startIndex, offsetBy: bounds.upperBound)
+            let range: Range<String.Index> = Range(uncheckedBounds: (startIndex, endIndex))
+            
+            return self[range]
+        }
+    }
+    
+    subscript (bounds: CountableRange<Int>) -> String {
+        get {
+            let startIndex = self.index(self.startIndex, offsetBy: bounds.lowerBound)
+            let endIndex = self.index(self.startIndex, offsetBy: bounds.upperBound - 1)
+            let range: Range<String.Index> = Range(uncheckedBounds: (startIndex, endIndex))
+            
+            return self[range]
+        }
+    }
+}
+
 
 
 
