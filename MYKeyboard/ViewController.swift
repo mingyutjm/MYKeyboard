@@ -9,12 +9,25 @@
 import UIKit
 import SnapKit
 
+//let historyPath: String = { () -> String in
+//    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+//    let documentsDirectory = paths.object(at: 0) as! NSString
+//    let path = documentsDirectory.appendingPathComponent("TypingHistory.plist")
+//    return path
+//}()
+//
+//let historyDictionary: NSMutableDictionary? = { () -> NSMutableDictionary? in
+//    let dict = NSMutableDictionary(contentsOfFile: historyPath)
+//    return dict
+//}()
+
 class ViewController: UIViewController/*, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout*/ {
 
     let textView = UITextView()
     
     var collectionView: UICollectionView!
-    
+
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -26,6 +39,9 @@ class ViewController: UIViewController/*, UICollectionViewDelegate, UICollection
             make.top.equalTo(50)
             make.height.equalTo(200)
         })
+        
+        
+        
 /*        let layout = UICollectionViewFlowLayout.init()
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -48,7 +64,8 @@ class ViewController: UIViewController/*, UICollectionViewDelegate, UICollection
 
         collectionView.register(MyConllectionViewCell.self, forCellWithReuseIdentifier: "Cell")
 */
-        
+//        
+
     }
 
     /*

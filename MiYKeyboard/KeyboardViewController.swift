@@ -13,6 +13,18 @@ let bannerHeight = 55 as CGFloat
 let lineColor = UIColor.lightGray
 let lineThickness = 0.5
 
+let historyPath: String = { () -> String in
+    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+    let documentsDirectory = paths.object(at: 0) as! NSString
+    let path = documentsDirectory.appendingPathComponent("TypingHistory.plist")
+    return path
+}()
+
+let historyDictionary: NSMutableDictionary? = { () -> NSMutableDictionary? in
+    let dict = NSMutableDictionary(contentsOfFile: historyPath)
+    return dict
+}()
+
 
 class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
@@ -52,6 +64,9 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.height.greaterThanOrEqualTo(216+bannerHeight)
         })
 
+        
+//        NSString *plistPath = [[NSBundle mainBundle] pathForResource:@"plistdemo" ofType:@"plist"];
+//        NSMutableDictionary *data = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath];
 //216
     }
     
@@ -78,6 +93,62 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 //        self.nextKeyboardButton.setTitleColor(textColor, for: [])
     }
     
+    // MARK: 添加到History
+    func saveToHistory(withId key: String, pinyin: String, word: String) {
+        
+        if let dict = historyDictionary {
+            let value = dict.value(forKey: key) as? Array<[String]>
+            if value != nil {
+                var pinyins = value![0]
+                var words = value![1]
+                var frequence = value![2]
+                var oldIndex: Int = 0
+                var index = 0
+                var fre = 0
+                var flag = false
+                for (i, str) in words.enumerated() {
+                    if str == word {
+                        oldIndex = i
+                        fre = Int(frequence[i])!
+                        fre += 1
+                        flag = true
+                        break
+                    }
+                }
+                for (i, str) in frequence.enumerated() {
+                    let num = Int(str)!
+                    if num < fre {
+                        index = i
+                        break
+                    }
+                }
+                
+                if flag {       //有这个值
+                    words.remove(at: oldIndex)
+                    pinyins.remove(at: oldIndex)
+                    frequence.remove(at: oldIndex)
+                    
+                    words.insert(word, at: index)
+                    pinyins.insert(pinyin, at: index)
+                    frequence.insert("\(fre)", at: index)
+                } else {
+                    words.append(word)
+                    pinyins.append(pinyin)
+                    frequence.append("1")
+                }
+                dict.setObject([pinyins, words, frequence], forKey: key as NSCopying)
+                dict.write(toFile: historyPath, atomically: true)
+                
+            } else {
+                dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
+                dict.write(toFile: historyPath, atomically: true)
+            }
+        } else {
+            let dict = NSMutableDictionary()
+            dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
+            dict.write(toFile: historyPath, atomically: true)
+        }
+    }
     
     // MARK: 自定义
     func addTargetToKeys(_ dict: [String: KeyView]) {
