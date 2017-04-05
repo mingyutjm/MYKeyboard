@@ -118,6 +118,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         if idString == "" {
             isTyping = false
             pinyinStore.clearData()
+            idString = ""
 
         }
         if isTyping {
@@ -129,6 +130,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
                 }
                 proxy.insertText(text)
                 pinyinStore.clearData()
+                idString = ""
                 isTyping = false
             }
         }
@@ -137,7 +139,11 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
             //            self.wordsQuickCollection?.reloadData()
         }
-        self.pinyinLabel?.text = pinyinStore.splitedPinyinString
+        if isTyping {
+            self.pinyinLabel?.text = pinyinStore.splitedPinyinString
+        } else {
+            self.pinyinLabel?.text = ""
+        }
         
     }
     

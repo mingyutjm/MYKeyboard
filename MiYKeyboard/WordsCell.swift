@@ -26,6 +26,7 @@ class WordsCell: UICollectionViewCell {
         
         wordslabel.textAlignment = .center
         wordslabel.sizeToFit()
+        wordslabel.font = UIFont.preferredFont(forTextStyle: .title3)
         wordslabel.textColor = UIColor.black
         wordslabel.snp.makeConstraints({ (make) -> Void in
             make.left.top.bottom.equalToSuperview()
