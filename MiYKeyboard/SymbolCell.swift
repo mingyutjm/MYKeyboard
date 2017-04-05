@@ -12,7 +12,7 @@ class SymbolCell: UICollectionViewCell {
     
     var keyView: KeyView?
     let line = UIView()
-    
+    var index: Int?
     override init(frame: CGRect) {
         
         super.init(frame: frame)
@@ -20,6 +20,12 @@ class SymbolCell: UICollectionViewCell {
         
     }
 
+    func addPinyin(_ pinyin: String, index: Int) {
+        let key = Key(withTitle: pinyin, andType: .pinyin)
+        key.index = index
+        addKey(key)
+    }
+    
     func addKey(_ key: Key) {
         
         keyView = KeyView(withKey: key)
@@ -47,9 +53,7 @@ class SymbolCell: UICollectionViewCell {
 //    }
 
     override func layoutSubviews() {
-        
 
-        
         super.layoutSubviews()
         
     }

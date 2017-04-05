@@ -34,13 +34,18 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     var bottomView: UIView? = nil
     var keyboardView: UIView? = nil
     var pinyinLabel: UILabel? = nil
+    
+    var wordsQuickCollection: UICollectionView? = nil
+    var symbolCollection: UICollectionView? = nil
     var wordsCollection: UICollectionView? = nil
     
-    var pinyinStore: PinyinStore? = nil
-    //    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
+    var selectedIndex = 0        //选拼音index
+    var saveIndex = true
+    var isTyping = false        //打字模式
+    var idString: String = ""
     
+    
+    var pinyinStore = PinyinStore()
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -93,62 +98,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 //        self.nextKeyboardButton.setTitleColor(textColor, for: [])
     }
     
-    // MARK: 添加到History
-    func saveToHistory(withId key: String, pinyin: String, word: String) {
-        
-        if let dict = historyDictionary {
-            let value = dict.value(forKey: key) as? Array<[String]>
-            if value != nil {
-                var pinyins = value![0]
-                var words = value![1]
-                var frequence = value![2]
-                var oldIndex: Int = 0
-                var index = 0
-                var fre = 0
-                var flag = false
-                for (i, str) in words.enumerated() {
-                    if str == word {
-                        oldIndex = i
-                        fre = Int(frequence[i])!
-                        fre += 1
-                        flag = true
-                        break
-                    }
-                }
-                for (i, str) in frequence.enumerated() {
-                    let num = Int(str)!
-                    if num < fre {
-                        index = i
-                        break
-                    }
-                }
-                
-                if flag {       //有这个值
-                    words.remove(at: oldIndex)
-                    pinyins.remove(at: oldIndex)
-                    frequence.remove(at: oldIndex)
-                    
-                    words.insert(word, at: index)
-                    pinyins.insert(pinyin, at: index)
-                    frequence.insert("\(fre)", at: index)
-                } else {
-                    words.append(word)
-                    pinyins.append(pinyin)
-                    frequence.append("1")
-                }
-                dict.setObject([pinyins, words, frequence], forKey: key as NSCopying)
-                dict.write(toFile: historyPath, atomically: true)
-                
-            } else {
-                dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
-                dict.write(toFile: historyPath, atomically: true)
-            }
-        } else {
-            let dict = NSMutableDictionary()
-            dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
-            dict.write(toFile: historyPath, atomically: true)
-        }
-    }
     
     // MARK: 自定义
     func addTargetToKeys(_ dict: [String: KeyView]) {
@@ -164,8 +113,38 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         }
     }
     
-    func tapNormalKey(_ sender: KeyView) {
+    func updateTypingViews() {
+        pinyinStore.id = idString
+        if idString == "" {
+            isTyping = false
+            pinyinStore.clearData()
 
+        }
+        if isTyping {
+            if pinyinStore.pinyins.count == 0 {
+                let proxy = textDocumentProxy as UITextDocumentProxy
+                var text = ""
+                for str in pinyinStore.wordSelected {
+                    text += str
+                }
+                proxy.insertText(text)
+                pinyinStore.clearData()
+                isTyping = false
+            }
+        }
+        UIView.performWithoutAnimation {
+            self.symbolCollection?.reloadData()
+            self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+            //            self.wordsQuickCollection?.reloadData()
+        }
+        self.pinyinLabel?.text = pinyinStore.splitedPinyinString
+        
+    }
+    
+    func tapNormalKey(_ sender: KeyView) {
+        isTyping = true
+        idString += sender.key.typeId!
+        updateTypingViews()
     }
     
     func tapOtherKey(_ sender: KeyView) {
@@ -173,13 +152,58 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
         let type = sender.key.type
         switch type {
+        case .pinyin:
+            pinyinStore.currentIndex = sender.key.index!
+            selectedIndex = sender.key.index!
+            let length = pinyinStore.pinyinSelected.characters.count
+            
+            if !saveIndex {
+                pinyinStore.indexStore.removeLast()
+            }
+            var index = pinyinStore.indexStore.last!
+            index += length
+            pinyinStore.indexStore.append(index)
+            saveIndex = false
+
+            
+            UIView.performWithoutAnimation {
+                self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+            }
+            self.pinyinLabel?.text = pinyinStore.splitedPinyinString
+
         case .symbol, .number:
             proxy.insertText(sender.key.outputText!)
         case .space:
             proxy.insertText(" ")
-
+            
+            
         case .backspace:
-            proxy.deleteBackward()
+            if isTyping {
+                if pinyinStore.indexStore.count > 1 {
+                    pinyinStore.currentIndex = 0
+                    pinyinStore.pinyinSelected = ""
+                    pinyinStore.indexStore.removeLast()
+                    if pinyinStore.wordSelected.count > 0 {
+                        pinyinStore.wordSelected.removeLast()
+                    }
+                    saveIndex = true
+                    updateTypingViews()
+//                    UIView.performWithoutAnimation {
+//                        self.symbolCollection?.reloadData()
+//                        self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+//                    }
+//                    self.pinyinLabel?.text = pinyinStore.splitedPinyinString
+
+                } else {
+                    idString.characters.removeLast()
+//                    idString.remove(at: idString.index(before: idString.endIndex))
+                    updateTypingViews()
+
+                }
+            } else {
+                proxy.deleteBackward()
+            }
+
         case .return:
             proxy.insertText("\n")
         default:
@@ -248,13 +272,13 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         collectionView.dataSource = self
         collectionView.register(WordsCell.self, forCellWithReuseIdentifier: "WordsCell")
         
-        wordsCollection = collectionView
-        bannerView?.addSubview(wordsCollection!)
-        wordsCollection!.snp.makeConstraints({ (make) -> Void in
+        bannerView?.addSubview(collectionView)
+        collectionView.snp.makeConstraints({ (make) -> Void in
             make.top.equalTo(pinyinLabel!.snp.bottom)
             make.left.right.equalTo(pinyinLabel!)
             make.bottom.equalToSuperview()
         })
+        wordsQuickCollection = collectionView
 
     }
     
@@ -302,7 +326,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.width.equalToSuperview().dividedBy(5)
             make.height.equalToSuperview().multipliedBy(0.75)
         })
-        
+        self.symbolCollection = collectionView
         
         // MARK: 左下
         let leftBottonView = UIView()
@@ -484,21 +508,41 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return symbolStore.allSymbols.count
+        if collectionView === self.wordsQuickCollection {
+            if isTyping {
+                return pinyinStore.words.count
+            } else {
+                return 0
+            }
+        }
+        else {
+            if isTyping {
+                return pinyinStore.pinyins.count
+            } else {
+                return symbolStore.allSymbols.count
+            }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        
-        if collectionView === self.wordsCollection {
+        if collectionView === self.wordsQuickCollection {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WordsCell", for: indexPath) as! WordsCell
-            cell.wordslabel.text = "我我我我我"
+            if isTyping {
+                cell.wordslabel.text = pinyinStore.words[indexPath.row]
+            }
             return cell
 
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
-            cell.addKey(symbolStore.allSymbols[indexPath.row])
+            
+            if isTyping {
+                cell.addPinyin(pinyinStore.pinyins[indexPath.row], index: indexPath.row)
+            } else {
+                cell.addKey(symbolStore.allSymbols[indexPath.row])
+            }
             cell.keyView?.addTarget(self, action: #selector(tapOtherKey(_:)), for: .touchUpInside)
+
             return cell
         }
         
@@ -506,12 +550,27 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
-        if collectionView === self.wordsCollection {
-            let proxy = textDocumentProxy as UITextDocumentProxy
+        if collectionView === self.wordsQuickCollection {
             
-            proxy.insertText("www")
+//            proxy.insertText(pinyinStore.words[indexPath.row])
+            let word = pinyinStore.words[indexPath.row]
+            pinyinStore.wordSelected.append(word)
             
             
+            pinyinStore.currentIndex = selectedIndex
+            let length = pinyinStore.pinyinSelected.characters.count
+            
+            var index = pinyinStore.indexStore.last!
+            if saveIndex {
+                index += length
+                pinyinStore.indexStore.append(index)
+            }
+            pinyinStore.pinyinSelected = ""
+            saveIndex = true
+            
+            updateTypingViews()
+            
+            selectedIndex = 0
         }
     }
     
@@ -523,7 +582,65 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 //        return size
 //    }
 
+}
 
+
+
+// MARK: 添加到History     结构为   0 pinyin    1 word  2 frequence
+func saveToHistory(withId key: String, pinyin: String, word: String) {
+    
+    if let dict = historyDictionary {
+        let value = dict.value(forKey: key) as? Array<[String]>
+        if value != nil {
+            var pinyins = value![0]
+            var words = value![1]
+            var frequence = value![2]
+            var oldIndex: Int = 0
+            var index = 0
+            var fre = 0
+            var flag = false
+            for (i, str) in words.enumerated() {
+                if str == word {
+                    oldIndex = i
+                    fre = Int(frequence[i])!
+                    fre += 1
+                    flag = true
+                    break
+                }
+            }
+            for (i, str) in frequence.enumerated() {
+                let num = Int(str)!
+                if num < fre {
+                    index = i
+                    break
+                }
+            }
+            
+            if flag {       //有这个值
+                words.remove(at: oldIndex)
+                pinyins.remove(at: oldIndex)
+                frequence.remove(at: oldIndex)
+                
+                words.insert(word, at: index)
+                pinyins.insert(pinyin, at: index)
+                frequence.insert("\(fre)", at: index)
+            } else {
+                words.append(word)
+                pinyins.append(pinyin)
+                frequence.append("1")
+            }
+            dict.setObject([pinyins, words, frequence], forKey: key as NSCopying)
+            dict.write(toFile: historyPath, atomically: true)
+            
+        } else {
+            dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
+            dict.write(toFile: historyPath, atomically: true)
+        }
+    } else {
+        let dict = NSMutableDictionary()
+        dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
+        dict.write(toFile: historyPath, atomically: true)
+    }
 }
 
 //扩展UICollectionView 使得滑动scrollView可以取消UIControl的点击事件

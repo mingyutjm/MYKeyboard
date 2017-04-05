@@ -70,7 +70,8 @@ class KeyView: UIControl {
         switch type {
         case .symbol,
              .backspace,
-             .nextKeyboard:
+             .nextKeyboard,
+             .pinyin:
             backgroundColor = grayColor
         case .return:
             backgroundColor = blueColor

@@ -20,6 +20,7 @@ enum KeyType {
     case number         //数字
     case dismiss        //关闭键盘
     case moreWords      //更多候选词
+    case pinyin         //拼音
 }
 
 class Key {
@@ -28,6 +29,7 @@ class Key {
     let type: KeyType
     let typeId: String?
     var outputText: String?
+    var index: Int? = nil       //用来选拼音
     
     init(withTitle title:String, andType type: KeyType, typeId: String? = nil) {
         

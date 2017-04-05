@@ -11,9 +11,11 @@ import Foundation
 class WordsStore {
     
     var words: [String] = []
-    
-    init() {
-        
+    var pinyin: String = "" {
+        didSet {
+            words = stringToArray(pinyin)
+        }
     }
-
+    
+    
 }
