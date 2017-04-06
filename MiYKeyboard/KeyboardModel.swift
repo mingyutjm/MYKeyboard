@@ -21,6 +21,7 @@ enum KeyType {
     case dismiss        //关闭键盘
     case moreWords      //更多候选词
     case pinyin         //拼音
+    case reType         //重输
 }
 
 class Key {

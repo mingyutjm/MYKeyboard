@@ -39,9 +39,10 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     var symbolCollection: UICollectionView? = nil
     var wordsCollection: UICollectionView? = nil
     
-    var selectedIndex = 0        //选拼音index
-    var saveIndex = true
+    var selectedIndex = 0       //选拼音index
+    var saveIndex = true        //true为没有选中拼音，false为已经选中拼音
     var isTyping = false        //打字模式
+    
     var idString: String = ""
     
     
@@ -114,12 +115,13 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     }
     
     func updateTypingViews() {
-        pinyinStore.id = idString
+        if !pinyinStore.isInHistory || pinyinStore.needSearchHistory {      //如果不在历史中或者需要继续查询历史
+            pinyinStore.id = idString                                       //在历史中且不要查询历史就不会进if
+        }
         if idString == "" {
             isTyping = false
+            saveIndex = true
             pinyinStore.clearData()
-            idString = ""
-
         }
         if isTyping {
             if pinyinStore.pinyins.count == 0 {
@@ -129,20 +131,25 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
                     text += str
                 }
                 proxy.insertText(text)
+                let pinyin = PinyinStore.splitPinyinStrings(pinyinStore.allPinyins)
+                saveToHistory(withId: pinyinStore.id, pinyin: pinyin, word: text)
+                isTyping = false
+                saveIndex = true
                 pinyinStore.clearData()
                 idString = ""
-                isTyping = false
             }
         }
         UIView.performWithoutAnimation {
             self.symbolCollection?.reloadData()
             self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+//            self.wordsQuickCollection?.layoutIfNeeded()
             //            self.wordsQuickCollection?.reloadData()
         }
         if isTyping {
             self.pinyinLabel?.text = pinyinStore.splitedPinyinString
         } else {
             self.pinyinLabel?.text = ""
+            saveIndex = true
         }
         
     }
@@ -150,6 +157,16 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     func tapNormalKey(_ sender: KeyView) {
         isTyping = true
         idString += sender.key.typeId!
+        
+        if saveIndex == false {
+            pinyinStore.currentIndex = 0
+            pinyinStore.pinyinSelected = ""
+            pinyinStore.indexStore.removeLast()
+            pinyinStore.allPinyins.removeLast()
+
+            saveIndex = true
+        }
+        
         updateTypingViews()
     }
     
@@ -160,17 +177,20 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         switch type {
         case .pinyin:
             pinyinStore.currentIndex = sender.key.index!
+            pinyinStore.isInHistory = false
+            pinyinStore.needSearchHistory = false
             selectedIndex = sender.key.index!
             let length = pinyinStore.pinyinSelected.characters.count
             
             if !saveIndex {
                 pinyinStore.indexStore.removeLast()
+                pinyinStore.allPinyins.removeLast()
             }
+            pinyinStore.allPinyins.append(pinyinStore.pinyinSelected)
             var index = pinyinStore.indexStore.last!
             index += length
             pinyinStore.indexStore.append(index)
             saveIndex = false
-
             
             UIView.performWithoutAnimation {
                 self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
@@ -179,30 +199,55 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
         case .symbol, .number:
             proxy.insertText(sender.key.outputText!)
+            
         case .space:
-            proxy.insertText(" ")
-            
-            
+            if isTyping {
+                let word = pinyinStore.words[0]
+                pinyinStore.wordSelected.append(word)
+                
+                if pinyinStore.isInHistory {
+                    pinyinStore.allPinyins.append(pinyinStore.splitedPinyinString)
+                    pinyinStore.pinyins.removeAll()         //就是清除数据
+                    pinyinStore.needSearchHistory = false
+                } else {
+                    pinyinStore.currentIndex = selectedIndex
+                    let length = pinyinStore.pinyinSelected.characters.count
+                    var index = pinyinStore.indexStore.last!
+                    if saveIndex {
+                        index += length
+                        pinyinStore.indexStore.append(index)
+                        pinyinStore.allPinyins.append(pinyinStore.pinyinSelected)
+                    }
+                }
+                
+                pinyinStore.pinyinSelected = ""
+                saveIndex = true
+                updateTypingViews()
+                selectedIndex = 0
+
+            } else {
+                proxy.insertText(" ")
+            }
+
         case .backspace:
             if isTyping {
-                if pinyinStore.indexStore.count > 1 {
+                if pinyinStore.indexStore.count > 1 {       //有选中的拼音或者字
+                    pinyinStore.indexStore.removeLast()
+                    pinyinStore.allPinyins.removeLast()
                     pinyinStore.currentIndex = 0
                     pinyinStore.pinyinSelected = ""
-                    pinyinStore.indexStore.removeLast()
-                    if pinyinStore.wordSelected.count > 0 {
+
+                    if saveIndex && pinyinStore.wordSelected.count > 0 {    //若没有选中拼音且有选中字
                         pinyinStore.wordSelected.removeLast()
                     }
+
                     saveIndex = true
                     updateTypingViews()
-//                    UIView.performWithoutAnimation {
-//                        self.symbolCollection?.reloadData()
-//                        self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
-//                    }
-//                    self.pinyinLabel?.text = pinyinStore.splitedPinyinString
 
                 } else {
                     idString.characters.removeLast()
 //                    idString.remove(at: idString.index(before: idString.endIndex))
+                    pinyinStore.isInHistory = false
                     updateTypingViews()
 
                 }
@@ -211,7 +256,21 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             }
 
         case .return:
-            proxy.insertText("\n")
+            if isTyping {
+                proxy.insertText((self.pinyinLabel?.text)!)
+                idString = ""
+                updateTypingViews()
+            } else {
+                proxy.insertText("\n")
+            }
+            
+        case .reType:
+            if isTyping {
+                idString = ""
+                saveIndex = true
+                pinyinStore.clearData()
+                updateTypingViews()
+            }
         default:
             break
         }
@@ -268,7 +327,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         let layout = UICollectionViewFlowLayout.init()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.minimumLineSpacing = 5
+        layout.minimumLineSpacing = 10
         layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight*2/5)
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.backgroundColor = UIColor.clear
@@ -287,7 +346,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         wordsQuickCollection = collectionView
 
     }
-    
     
     // MARK: 默认键盘
     func defaultKeyboard() -> (UIView?, UIView?, UIView?) {
@@ -359,7 +417,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         })
         
         let viewR1 = KeyView(withKey: Key(withTitle: "⬅︎", andType: .backspace))
-        let viewR2 = KeyView(withKey: Key(withTitle: "换行", andType: .backspace))
+        let viewR2 = KeyView(withKey: Key(withTitle: "重输", andType: .reType))
         let viewR3 = KeyView(withKey: Key(withTitle: "发送", andType: .return))
         rightView.addSubview(viewR1)
         rightView.addSubview(viewR2)
@@ -507,7 +565,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
     
     // MARK: Collection View Delegate
-    
+        
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -561,16 +619,23 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 //            proxy.insertText(pinyinStore.words[indexPath.row])
             let word = pinyinStore.words[indexPath.row]
             pinyinStore.wordSelected.append(word)
-            
-            
-            pinyinStore.currentIndex = selectedIndex
-            let length = pinyinStore.pinyinSelected.characters.count
-            
-            var index = pinyinStore.indexStore.last!
-            if saveIndex {
-                index += length
-                pinyinStore.indexStore.append(index)
+            if pinyinStore.isInHistory && indexPath.row < pinyinStore.historyCount {
+                pinyinStore.allPinyins.append(pinyinStore.splitedPinyinString)
+                pinyinStore.pinyins.removeAll()         //就是清除数据
+                pinyinStore.needSearchHistory = false
+            } else {
+                pinyinStore.isInHistory = false
+                pinyinStore.needSearchHistory = false
+                pinyinStore.currentIndex = selectedIndex
+                let length = pinyinStore.pinyinSelected.characters.count
+                var index = pinyinStore.indexStore.last!
+                if saveIndex {
+                    index += length
+                    pinyinStore.indexStore.append(index)
+                    pinyinStore.allPinyins.append(pinyinStore.pinyinSelected)
+                }
             }
+            
             pinyinStore.pinyinSelected = ""
             saveIndex = true
             
@@ -580,12 +645,33 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         }
     }
     
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+//        
+//        if collectionView === self.wordsQuickCollection {
+//            
+//            return 10
+//        }
+//        
+//        return 0
+//    }
+//    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+//        
+//        if collectionView === self.wordsQuickCollection {
+//            return 10
+//        }
+//        
+//        return 0
+//    }
+    
 //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 //        
-//        let width = collectionView.bounds.width
-//        let height = collectionView.bounds.height
-//        let size = CGSize(width: width, height: height/4)
-//        return size
+//        if collectionView === self.wordsQuickCollection {
+//            let width = collectionView.bounds.width
+//            let height = collectionView.bounds.height
+//            let size = CGSize(width: width, height: height/4)
+//            return size
+//        }
 //    }
 
 }

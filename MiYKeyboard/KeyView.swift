@@ -71,7 +71,8 @@ class KeyView: UIControl {
         case .symbol,
              .backspace,
              .nextKeyboard,
-             .pinyin:
+             .pinyin,
+             .reType:
             backgroundColor = grayColor
         case .return:
             backgroundColor = blueColor

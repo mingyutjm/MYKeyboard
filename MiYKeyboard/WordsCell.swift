@@ -16,6 +16,9 @@ class WordsCell: UICollectionViewCell {
         
         super.init(frame: frame)
         
+        self.backgroundColor = UIColor.brown
+//        self.contentView.backgroundColor = UIColor.red
+        
         self.contentView.addSubview(wordslabel)
         
         self.contentView.snp.makeConstraints({ (make) -> Void in
@@ -46,3 +49,13 @@ class WordsCell: UICollectionViewCell {
     }
     
 }
+
+
+
+
+
+
+
+
+
+

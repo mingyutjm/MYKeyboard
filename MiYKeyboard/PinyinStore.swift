@@ -12,12 +12,14 @@ class PinyinStore {
     
     var id: String = "" {
         didSet {
-            
-            isInHistory = PinyinStore.findIdInHistory(id)
+            if needSearchHistory {
+                isInHistory = PinyinStore.findIdInHistory(id)
+            }
             if isInHistory {
                 let value = historyDictionary?.value(forKey: id) as? Array<[String]>
                 pinyinHistory = value![0][0]
                 words = value![1]
+                historyCount = words.count
             }
             if id == "" {
                 words.removeAll()
@@ -26,7 +28,12 @@ class PinyinStore {
                 pinyins = idToStrings(id, startIndex: indexStore.last!).0
                 if pinyins.count > 0 {
                     if let str = pinyinToWord[pinyins[currentIndex]] {
-                        words = stringToArray(str)
+                        if isInHistory {
+                            words.append(contentsOf: stringToArray(str))
+                            
+                        } else {
+                            words = stringToArray(str)
+                        }
                     }
                 } else {
                     words.removeAll()
@@ -39,17 +46,21 @@ class PinyinStore {
         didSet {
             if pinyins.count > 0 {
                 if let str = pinyinToWord[pinyins[currentIndex]] {
+                    isInHistory = false
                     words = stringToArray(str)
                     pinyinSelected = pinyins[currentIndex]
                 }
             }
         }
     }
+    var historyCount = 0
+    var needSearchHistory = true
     var indexStore = [0]                    //记录
     var isInHistory: Bool = false           //历史记录中是否有
     var pinyins = [String]()                //当前字的拼音
     var pinyinHistory: String = ""          //历史记录中的分好词的拼音
     var pinyinSelected = ""                 //已经选中的拼音
+    var allPinyins = [String]()             //所有选中的拼音
     var wordSelected = [String]()           //已选中的字
     
     var splitedPinyinString: String {       //分好词的结果
@@ -65,14 +76,17 @@ class PinyinStore {
     var words: [String] = []
     
     func clearData() {
+        isInHistory = false
         id = ""
         currentIndex = 0
         indexStore = [0]
-        isInHistory = false
+        needSearchHistory = true
         pinyins = []
         pinyinHistory = ""
         pinyinSelected = ""
         wordSelected = []
+        allPinyins = []
+        historyCount = 0
     }
     
     class func findIdInHistory(_ key: String) -> Bool {
