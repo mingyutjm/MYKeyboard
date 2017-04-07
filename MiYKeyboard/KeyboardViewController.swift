@@ -39,9 +39,10 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     var symbolCollection: UICollectionView? = nil
     var wordsCollection: UICollectionView? = nil
     
-    var selectedIndex = 0       //选拼音index
-    var saveIndex = true        //true为没有选中拼音，false为已经选中拼音
-    var isTyping = false        //打字模式
+    var selectedIndex = 0               //选拼音index
+    var saveIndex = true                //true为没有选中拼音，false为已经选中拼音
+    var isTyping = false                //打字模式
+    var isClickSpaceOrWord = false      //是否点击了空格或者选择了字
     
     var idString: String = ""
     
@@ -115,6 +116,12 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     }
     
     func updateTypingViews() {
+        if isClickSpaceOrWord {
+            pinyinStore.currentIndex = 0
+            pinyinStore.pinyinSelected = ""
+        }
+        isClickSpaceOrWord = false
+
         if !pinyinStore.isInHistory || pinyinStore.needSearchHistory {      //如果不在历史中或者需要继续查询历史
             pinyinStore.id = idString                                       //在历史中且不要查询历史就不会进if
         }
@@ -139,17 +146,22 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
                 idString = ""
             }
         }
-        UIView.performWithoutAnimation {
-            self.symbolCollection?.reloadData()
-            self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
-//            self.wordsQuickCollection?.layoutIfNeeded()
-            //            self.wordsQuickCollection?.reloadData()
-        }
+        
+        
         if isTyping {
             self.pinyinLabel?.text = pinyinStore.splitedPinyinString
         } else {
             self.pinyinLabel?.text = ""
             saveIndex = true
+        }
+        
+
+        
+        UIView.performWithoutAnimation {
+            self.symbolCollection?.reloadData()
+            self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+            //            self.wordsQuickCollection?.layoutIfNeeded()
+            //            self.wordsQuickCollection?.reloadData()
         }
         
     }
@@ -158,6 +170,8 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         isTyping = true
         idString += sender.key.typeId!
         
+        isClickSpaceOrWord = false
+
         if saveIndex == false {
             pinyinStore.currentIndex = 0
             pinyinStore.pinyinSelected = ""
@@ -172,6 +186,8 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     
     func tapOtherKey(_ sender: KeyView) {
         let proxy = textDocumentProxy as UITextDocumentProxy
+
+        isClickSpaceOrWord = false
 
         let type = sender.key.type
         switch type {
@@ -201,6 +217,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             proxy.insertText(sender.key.outputText!)
             
         case .space:
+            isClickSpaceOrWord = true
             if isTyping {
                 let word = pinyinStore.words[0]
                 pinyinStore.wordSelected.append(word)
@@ -328,6 +345,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
         layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight*2/5)
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.backgroundColor = UIColor.clear
@@ -565,7 +583,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
     
     // MARK: Collection View Delegate
-        
+    
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
     }
@@ -616,6 +634,8 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         
         if collectionView === self.wordsQuickCollection {
             
+            isClickSpaceOrWord = true
+
 //            proxy.insertText(pinyinStore.words[indexPath.row])
             let word = pinyinStore.words[indexPath.row]
             pinyinStore.wordSelected.append(word)
@@ -638,12 +658,25 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             
             pinyinStore.pinyinSelected = ""
             saveIndex = true
-            
+            selectedIndex = 0
             updateTypingViews()
             
-            selectedIndex = 0
         }
     }
+    
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        
+//        if collectionView === self.wordsQuickCollection {
+//            let cell = WordsCell(frame: CGRect.zero)
+//            cell.wordslabel.text = pinyinStore.words[indexPath.row]
+//            cell.layoutIfNeeded()
+//            let size = cell.frame.size
+//            return size
+//        } else {
+//            return CGSize(width: 75, height: 40.5)
+//        }
+//    }
+    
     
 //    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
 //        

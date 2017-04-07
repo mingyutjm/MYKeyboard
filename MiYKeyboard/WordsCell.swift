@@ -16,9 +16,13 @@ class WordsCell: UICollectionViewCell {
         
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.brown
+//        self.backgroundColor = UIColor.brown
 //        self.contentView.backgroundColor = UIColor.red
-        
+        wordslabel.textAlignment = .center
+        wordslabel.sizeToFit()
+        wordslabel.font = UIFont.preferredFont(forTextStyle: .title3)
+        wordslabel.textColor = UIColor.black
+
         self.contentView.addSubview(wordslabel)
         
         self.contentView.snp.makeConstraints({ (make) -> Void in
@@ -27,21 +31,21 @@ class WordsCell: UICollectionViewCell {
             make.right.equalTo(wordslabel)
         })
         
-        wordslabel.textAlignment = .center
-        wordslabel.sizeToFit()
-        wordslabel.font = UIFont.preferredFont(forTextStyle: .title3)
-        wordslabel.textColor = UIColor.black
         wordslabel.snp.makeConstraints({ (make) -> Void in
             make.left.top.bottom.equalToSuperview()
             make.width.greaterThanOrEqualTo(46.875).priority(1000)
         })
+
     }
     
     
-    override func layoutSubviews() {
-        
-        super.layoutSubviews()
-    }
+//    override func layoutSubviews() {
+//        
+//        super.layoutSubviews()
+//        
+//
+//
+//    }
     
     
     required init?(coder aDecoder: NSCoder) {

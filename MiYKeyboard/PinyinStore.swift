@@ -29,8 +29,22 @@ class PinyinStore {
                 if pinyins.count > 0 {
                     if let str = pinyinToWord[pinyins[currentIndex]] {
                         if isInHistory {
-                            words.append(contentsOf: stringToArray(str))
-                            
+                            let tempArr = stringToArray(str)
+                            var arr = [String]()
+                            var flag = true
+                            for temp in tempArr {
+                                for word in words {
+                                    if temp == word {
+                                        flag = false
+                                    }
+                                }
+                                if flag {
+                                    arr.append(temp)
+                                }
+                                flag = true
+                            }
+
+                            words.append(contentsOf: arr)
                         } else {
                             words = stringToArray(str)
                         }
