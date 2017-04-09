@@ -35,9 +35,13 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     var keyboardView: UIView? = nil
     var pinyinLabel: UILabel? = nil
     
+    
+    
     var wordsQuickCollection: UICollectionView? = nil
     var symbolCollection: UICollectionView? = nil
     var wordsCollection: UICollectionView? = nil
+//    var allSymbolCollection: UICollectionView? = nil
+    var numberView = UIView()
     
     var selectedIndex = 0               //选拼音index
     var saveIndex = true                //true为没有选中拼音，false为已经选中拼音
@@ -288,6 +292,13 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
                 pinyinStore.clearData()
                 updateTypingViews()
             }
+        case .changeToNumber:
+            numberView.isHidden = false
+        case .changeToNormal:
+            numberView.isHidden = true
+//            allSymbolCollection?.isHidden = true
+//        case .changeToSymbol:
+//            allSymbolCollection?.isHidden = false
         default:
             break
         }
@@ -365,6 +376,10 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
 
     }
     
+    func createNumberKeyboard() {
+        
+    }
+    
     // MARK: 默认键盘
     func defaultKeyboard() -> (UIView?, UIView?, UIView?) {
         
@@ -378,7 +393,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             make.top.left.right.equalToSuperview()
             make.height.equalTo(bannerHeight)
         })
-        
         
         //下
         let bottomView = UIView()
@@ -499,6 +513,42 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
         
         addConstraintsToMid(centerView, arrMid)
         
+        
+        centerView.addSubview(numberView)
+        numberView.snp.makeConstraints({ (make) -> Void in
+            make.edges.equalToSuperview()
+        })
+        let number1 = KeyView(withKey: Key(withTitle: "1", andType: .number, typeId: "1"))      //1
+        let number2 = KeyView(withKey: Key(withTitle: "2", andType: .number, typeId: "2"))      //2
+        let number3 = KeyView(withKey: Key(withTitle: "3", andType: .number, typeId: "3"))      //3
+        let number4 = KeyView(withKey: Key(withTitle: "4", andType: .number, typeId: "4"))      //4
+        let number5 = KeyView(withKey: Key(withTitle: "5", andType: .number, typeId: "5"))      //5
+        let number6 = KeyView(withKey: Key(withTitle: "6", andType: .number, typeId: "6"))      //6
+        let number7 = KeyView(withKey: Key(withTitle: "7", andType: .number, typeId: "7"))      //7
+        let number8 = KeyView(withKey: Key(withTitle: "8", andType: .number, typeId: "8"))      //8
+        let number9 = KeyView(withKey: Key(withTitle: "9", andType: .number, typeId: "9"))      //9
+        let number0 = KeyView(withKey: Key(withTitle: "0", andType: .number, typeId: "0"))      //0
+        let number00 = KeyView(withKey: Key(withTitle: "返回", andType: .changeToNormal))
+        
+        let arrNumber = [number1, number2, number3, number4, number5, number6, number7, number8, number9, number00, number0]
+        for view in arrNumber {
+            numberView.addSubview(view)
+        }
+        addConstraintsToMid(numberView, arrNumber)
+        numberView.isHidden = true
+        keysDictionary["11"] = number1
+        keysDictionary["22"] = number2
+        keysDictionary["33"] = number3
+        keysDictionary["44"] = number4
+        keysDictionary["55"] = number5
+        keysDictionary["66"] = number6
+        keysDictionary["77"] = number7
+        keysDictionary["88"] = number8
+        keysDictionary["99"] = number9
+        keysDictionary["00"] = number0
+        keysDictionary["back"] = number00
+
+        
         //加线
         let lineBanner0 = UIView(); lineBanner0.backgroundColor = lineColor
         let lineBanner1 = UIView(); lineBanner1.backgroundColor = lineColor
@@ -576,6 +626,32 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             
         })
         
+        /*
+        let layout1 = UICollectionViewFlowLayout.init()
+        layout1.scrollDirection = .vertical
+        layout1.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        layout1.minimumLineSpacing = 0
+        layout1.minimumInteritemSpacing = 0
+        layout1.itemSize = CGSize(width: 74.5, height: 40.5)
+        let collectionView1 = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout1)
+        collectionView1.delaysContentTouches = false
+        collectionView1.canCancelContentTouches = true
+        collectionView1.backgroundColor = grayColor
+        collectionView1.delegate = self
+        collectionView1.dataSource = self
+        collectionView1.register(SymbolCell.self, forCellWithReuseIdentifier: "SymbolCell")
+        allSymbolCollection = collectionView1
+        bottomView.addSubview(allSymbolCollection!)
+        allSymbolCollection?.backgroundColor = UIColor.white
+        allSymbolCollection?.isHidden = true
+        allSymbolCollection?.snp.makeConstraints({ (make) -> Void in
+            make.bottom.equalToSuperview()
+            make.right.equalTo(1)
+            make.top.equalTo(1)
+            make.left.equalTo(collectionView.snp.right).offset(1)
+        })
+         */
+        
         addTargetToKeys(keysDictionary)
         
         return (keyboard, bannerView, bottomView)
@@ -615,7 +691,8 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             }
             return cell
 
-        } else {
+        }
+        else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
             
             if isTyping {

@@ -12,6 +12,7 @@ class SymbolCell: UICollectionViewCell {
     
     var keyView: KeyView?
     let line = UIView()
+    let line1 = UIView()
     var index: Int?
     override init(frame: CGRect) {
         
@@ -32,7 +33,9 @@ class SymbolCell: UICollectionViewCell {
         
         self.contentView.addSubview(keyView!)
         self.contentView.addSubview(line)
+//        self.contentView.addSubview(line1)
         line.backgroundColor = lineColor
+//        line1.backgroundColor = lineColor
         
         keyView?.snp.makeConstraints({ (make) -> Void in
             make.edges.equalToSuperview()
@@ -41,6 +44,10 @@ class SymbolCell: UICollectionViewCell {
             make.left.right.bottom.equalToSuperview()
             make.height.equalTo(lineThickness)
         })
+//        line1.snp.makeConstraints({ (make) -> Void in
+//            make.top.right.bottom.equalToSuperview()
+//            make.width.equalTo(lineThickness)
+//        })
     }
     
 //    init(withKey key: Key) {

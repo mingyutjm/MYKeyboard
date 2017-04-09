@@ -22,6 +22,7 @@ enum KeyType {
     case moreWords      //更多候选词
     case pinyin         //拼音
     case reType         //重输
+    case changeToNormal //返回
 }
 
 class Key {
