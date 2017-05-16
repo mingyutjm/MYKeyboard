@@ -18,7 +18,7 @@ let idStringDict: [String: [String]] = [
     "22": ["ba", "ca"],
     "23": ["ce"],
     "24": ["ai", "bi", "ci"],
-    "26": ["co", "bo", "an", "ao"],
+    "26": ["bo", "an", "ao"],
     "28": ["bu", "cu"],
     "32": ["da", "fa"],
     "33": ["de"],

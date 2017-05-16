@@ -36,7 +36,6 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
     var pinyinLabel: UILabel? = nil
     
     
-    
     var wordsQuickCollection: UICollectionView? = nil
     var symbolCollection: UICollectionView? = nil
     var wordsCollection: UICollectionView? = nil
@@ -185,6 +184,7 @@ class KeyboardViewController: UIInputViewController, UICollectionViewDelegate, U
             saveIndex = true
         }
         
+        self.wordsQuickCollection?.setContentOffset(CGPoint.zero, animated: false)
         updateTypingViews()
     }
     

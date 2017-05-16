@@ -17,8 +17,6 @@ class SymbolCell: UICollectionViewCell {
     override init(frame: CGRect) {
         
         super.init(frame: frame)
-        
-        
     }
 
     func addPinyin(_ pinyin: String, index: Int) {

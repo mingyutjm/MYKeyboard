@@ -9,18 +9,6 @@
 import UIKit
 import SnapKit
 
-//let historyPath: String = { () -> String in
-//    let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
-//    let documentsDirectory = paths.object(at: 0) as! NSString
-//    let path = documentsDirectory.appendingPathComponent("TypingHistory.plist")
-//    return path
-//}()
-//
-//let historyDictionary: NSMutableDictionary? = { () -> NSMutableDictionary? in
-//    let dict = NSMutableDictionary(contentsOfFile: historyPath)
-//    return dict
-//}()
-
 class ViewController: UIViewController/*, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout*/ {
 
     let textView = UITextView()
